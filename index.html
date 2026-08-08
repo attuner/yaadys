@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yaady's Millet Roti Meals - Fresh, Healthy & Traditional</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            amber: '#D97706',
+                            green: '#059669',
+                            dark: '#111827',
+                            cream: '#FEF3C7',
+                            zomato: '#CB202D',
+                            swiggy: '#FC8019'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- jsPDF Library for Vector PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body class="bg-amber-50/30 text-gray-800 font-sans antialiased">
+
+    <!-- Header / Navigation -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-amber-100">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl">🌾</span>
+                <span class="text-xl font-bold text-gray-900 tracking-tight">Yaady's <span class="text-amber-600">Millet
+                        Roti Meals</span></span>
+            </div>
+            <nav class="hidden md:flex space-x-6 font-medium text-gray-600">
+                <a href="#about" class="hover:text-amber-600 transition">About Us</a>
+                <a href="#menu" class="hover:text-amber-600 transition">Our Menu</a>
+                <a href="#order-section" class="hover:text-amber-600 transition">Order Online</a>
+                <a href="#contact" class="hover:text-amber-600 transition">Contact</a>
+            </nav>
+            <a href="#order-section"
+                class="bg-amber-600 text-white px-4 py-2 rounded-full font-semibold shadow hover:bg-amber-700 transition text-sm">
+                Order Now
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-br from-amber-100 via-orange-50 to-emerald-50 py-16 md:py-24">
+        <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
+            <div class="space-y-6 text-center md:text-left">
+                <span
+                    class="inline-block bg-amber-200/60 text-amber-900 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">
+                    🌱 100% Wholesome & Gluten-Free Rotis
+                </span>
+                <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+                    Pure Taste, Ancient Grains.<br />
+                    <span class="text-amber-600">Hot Millet Roti Meals.</span>
+                </h1>
+                <p class="text-gray-600 text-base md:text-lg">
+                    Experience traditional Indian home cooking enriched with Jowar, Ragi, and Bajra. Freshly prepared
+                    daily and delivered hot to your doorstep.
+                </p>
+
+                <!-- Smart Link Order Buttons -->
+                <div class="pt-4 space-y-3 sm:space-y-0 sm:flex sm:space-x-3 justify-center md:justify-start">
+                    <a href="#order-section"
+                        class="flex items-center justify-center space-x-2 bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition duration-200 transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                        <span>Order Direct & Pick-up</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openSmartLink('zomato')"
+                        class="flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-5 rounded-xl shadow-lg transition duration-200 transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-utensils"></i>
+                        <span>Zomato</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openSmartLink('swiggy')"
+                        class="flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-5 rounded-xl shadow-lg transition duration-200 transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        <span>Swiggy</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Hero Image Banner -->
+            <div class="relative flex justify-center">
+                <div class="w-full max-w-md bg-white p-4 rounded-3xl shadow-xl border border-amber-100">
+                    <img src="images/Jowar-rotis.jpg" alt="Millet Roti Meal Thali"
+                        class="rounded-2xl object-cover h-72 w-full">
+                    <div class="mt-4 flex justify-between items-center text-sm font-semibold text-gray-700 px-2">
+                        <span>🔥 Freshly Prepared</span>
+                        <span class="text-emerald-600">★ 4.8 Rating</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Millet Section -->
+    <section id="about" class="py-16 bg-white">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold text-gray-900">Why Choose Yaady's Millets?</h2>
+            <p class="text-gray-600 mt-2 max-w-xl mx-auto">Sustainably grown ancient grains that nourish your body while
+                giving you authentic homemade flavor.</p>
+
+            <div class="grid md:grid-cols-3 gap-8 mt-12">
+                <div class="p-6 bg-amber-50/50 rounded-2xl border border-amber-100 text-center space-y-3">
+                    <div
+                        class="w-12 h-12 bg-amber-200 text-amber-800 rounded-full flex items-center justify-center mx-auto text-xl">
+                        🌾</div>
+                    <h3 class="text-lg font-bold text-gray-900">100% Whole Grain</h3>
+                    <p class="text-sm text-gray-600">Packed with essential minerals, high fiber, and complex carbs to
+                        keep you energized all day.</p>
+                </div>
+                <div class="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 text-center space-y-3">
+                    <div
+                        class="w-12 h-12 bg-emerald-200 text-emerald-800 rounded-full flex items-center justify-center mx-auto text-xl">
+                        💚</div>
+                    <h3 class="text-lg font-bold text-gray-900">Diabetes & Heart Friendly</h3>
+                    <p class="text-sm text-gray-600">Low glycemic index meal options that promote steady glucose levels
+                        and balanced digestion.</p>
+                </div>
+                <div class="p-6 bg-orange-50/50 rounded-2xl border border-orange-100 text-center space-y-3">
+                    <div
+                        class="w-12 h-12 bg-orange-200 text-orange-800 rounded-full flex items-center justify-center mx-auto text-xl">
+                        👩‍🍳</div>
+                    <h3 class="text-lg font-bold text-gray-900">Authentic Home Recipes</h3>
+                    <p class="text-sm text-gray-600">Prepared in a clean kitchen environment using traditional
+                        slow-cooking techniques and fresh spices.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Highlights Section -->
+    <section id="menu" class="py-16 bg-amber-50/30 border-t border-b border-amber-100">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900">Featured Meals & Rotis</h2>
+                <p class="text-gray-600 mt-2">Explore our signature millet-based dishes</p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Item 1 -->
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition">
+                    <img src=images/Jowar-rotis.jpg alt="Jowar Rotis" class="h-48 w-full object-cover">
+                    <div class="p-6 space-y-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-lg text-gray-900">Jowar Roti (2 Pcs)</h3>
+                            <span
+                                class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2 py-1 rounded">Bestseller</span>
+                        </div>
+                        <p class="text-sm text-gray-600">2 Warm Soft Yellow Jowar Rotis.</p>
+                        <div class="pt-2 flex justify-between items-center">
+                            <span class="text-xl font-bold text-amber-700">₹49</span>
+                            <a href="#order-section" onclick="selectMenuItem(0)"
+                                class="text-xs bg-amber-600 text-white hover:bg-amber-700 font-bold px-4 py-2 rounded-full transition">Order
+                                Now</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition">
+                    <img src="images/Ragi-rotis.jpg" alt="Ragi Rotis" class="h-48 w-full object-cover">
+                    <div class="p-6 space-y-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-lg text-gray-900">Ragi Rotis (2 Pcs)</h3>
+                            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-1 rounded">High
+                                Calcium</span>
+                        </div>
+                        <p class="text-sm text-gray-600">2 Fresh Finger-Millet (Ragi) Rotis.</p>
+                        <div class="pt-2 flex justify-between items-center">
+                            <span class="text-xl font-bold text-amber-700">₹49</span>
+                            <a href="#order-section" onclick="selectMenuItem(1)"
+                                class="text-xs bg-amber-600 text-white hover:bg-amber-700 font-bold px-4 py-2 rounded-full transition">Order
+                                Now</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition">
+                    <img src="images/Bajra-rotis.png" alt="Bajra Rotis" class="h-48 w-full object-cover">
+                    <div class="p-6 space-y-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-lg text-gray-900">Bajra Rotis (2 Pcs)</h3>
+                            <span class="bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-1 rounded">Family
+                                Pick</span>
+                        </div>
+                        <p class="text-sm text-gray-600">2 Bajra Rotis.</p>
+                        <div class="pt-2 flex justify-between items-center">
+                            <span class="text-xl font-bold text-amber-700">₹49</span>
+                            <a href="#order-section" onclick="selectMenuItem(2)"
+                                class="text-xs bg-amber-600 text-white hover:bg-amber-700 font-bold px-4 py-2 rounded-full transition">Order
+                                Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Direct Order Section -->
+    <section id="order-section" class="py-16 bg-gradient-to-b from-white to-amber-50/50">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="text-center mb-10">
+                <span
+                    class="bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Fast
+                    Direct Ordering</span>
+                <h2 class="text-3xl font-bold text-gray-900 mt-2">Place Your Order Direct & Collect from Yaady's Pickup
+                    Point</h2>
+                <p class="text-gray-600 text-sm mt-1">Select your items, complete payment via UPI, and receive your
+                    order receipt!</p>
+            </div>
+
+            <form id="orderForm" onsubmit="showPaymentSection(event)"
+                class="bg-white p-6 md:p-8 rounded-3xl shadow-xl border border-amber-100 space-y-8">
+
+                <!-- 1. Customer Details -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold text-gray-900 border-b pb-2 flex items-center space-x-2">
+                        <span
+                            class="bg-amber-600 text-white w-6 h-6 rounded-full inline-flex items-center justify-center text-xs">1</span>
+                        <span>Customer Information</span>
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="custName"
+                                class="block text-xs font-semibold text-gray-700 uppercase mb-1">Customer Name & Address
+                                *</label>
+                            <input type="text" id="custName" required
+                                placeholder="e.g. Ramesh Kumar, YSR Secretariat Colony"
+                                class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label for="custMobile"
+                                class="block text-xs font-semibold text-gray-700 uppercase mb-1">Mobile Number *</label>
+                            <input type="tel" id="custMobile" pattern="[0-9]{10}" required
+                                placeholder="10-digit mobile number"
+                                class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="orderDetails" class="block text-xs font-semibold text-gray-700 uppercase mb-1">Order
+                            To Be Ready By: Date & Time *</label>
+                        <textarea id="orderDetails" rows="2" required placeholder="Enter Date and Time of Pickup"
+                            class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- 2. Menu Selection -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold text-gray-900 border-b pb-2 flex items-center space-x-2">
+                        <span
+                            class="bg-amber-600 text-white w-6 h-6 rounded-full inline-flex items-center justify-center text-xs">2</span>
+                        <span>Select Menu Items</span>
+                    </h3>
+
+                    <div class="space-y-4" id="menuItemsList">
+                        <!-- Menu Items injected via Javascript -->
+                    </div>
+                </div>
+
+                <!-- 3. Order Total & Summary -->
+                <div class="bg-amber-50 p-6 rounded-2xl border border-amber-200 space-y-3">
+                    <h4 class="font-bold text-gray-900 border-b border-amber-200 pb-2">Order Summary</h4>
+                    <div id="summaryList" class="text-sm space-y-1 text-gray-600">
+                        <p class="italic text-gray-400">No items selected yet.</p>
+                    </div>
+                    <div
+                        class="border-t border-amber-200 pt-3 flex justify-between items-center text-lg font-extrabold text-gray-900">
+                        <span>Total Payable Amount:</span>
+                        <span id="grandTotal" class="text-2xl text-amber-700">₹0</span>
+                    </div>
+                </div>
+
+                <!-- Proceed to Payment Button -->
+                <button type="submit"
+                    class="w-full bg-amber-600 hover:bg-amber-700 text-white text-lg font-bold py-4 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center space-x-3">
+                    <i class="fa-solid fa-credit-card"></i>
+                    <span>Proceed to UPI Payment</span>
+                </button>
+            </form>
+
+            <!-- 4. Dynamic UPI Payment Section (Initially Hidden) -->
+            <div id="paymentModalSection"
+                class="hidden mt-8 bg-white p-6 md:p-8 rounded-3xl shadow-xl border-2 border-amber-500 space-y-6">
+                <div class="text-center space-y-2 border-b pb-4">
+                    <span
+                        class="bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Step
+                        2 of 2</span>
+                    <h3 class="text-2xl font-bold text-gray-900">Make UPI Payment</h3>
+                    <p class="text-sm text-gray-600">Click the UPI ID or scan the QR Code using GPay, PhonePe, Paytm, or
+                        BHIM.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 items-center">
+                    <!-- Restaurant UPI Details -->
+                    <div class="space-y-4 bg-amber-50 p-6 rounded-2xl border border-amber-200">
+                        <div class="flex justify-between items-center text-sm font-semibold text-gray-700">
+                            <span>Total Amount Due:</span>
+                            <span id="payAmountDisplay" class="text-xl font-bold text-amber-700">₹0</span>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Restaurant UPI ID
+                                (Click to Pay)</label>
+                            <a id="upiDeepLink" href="#"
+                                class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border border-amber-300 hover:border-amber-600 transition group shadow-sm">
+                                <span id="displayUpiId" class="font-bold text-gray-900 text-base">9000001690@ybl</span>
+                                <span
+                                    class="text-xs bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg group-hover:bg-amber-700 transition">Pay
+                                    Now</span>
+                            </a>
+                        </div>
+
+                        <p class="text-xs text-gray-500">
+                            <i class="fa-solid fa-circle-info text-amber-600"></i> Tapping the UPI ID on mobile will
+                            launch your default UPI app pre-filled with the exact bill amount.
+                        </p>
+                    </div>
+
+                    <!-- Dynamic UPI QR Scanner -->
+                    <div
+                        class="flex flex-col items-center justify-center space-y-3 bg-gray-50 p-6 rounded-2xl border border-gray-200 text-center">
+                        <h4 class="font-bold text-gray-800 text-sm">Scan QR Code to Pay</h4>
+
+                        <a id="qrDeepLink" href="#" class="block hover:opacity-90 transition">
+                            <img id="upiQrCodeImg" src="" alt="UPI QR Code"
+                                class="w-44 h-44 rounded-xl shadow border border-gray-300 bg-white p-2">
+                        </a>
+
+                        <span class="text-xs text-gray-500 font-medium">Click QR Code or Scan with any UPI
+                            Scanner</span>
+                    </div>
+                </div>
+
+                <!-- Final Order Placement Button -->
+                <button type="button" onclick="finaliseOrderAndSend()"
+                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-lg font-bold py-4 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center space-x-3">
+                    <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    <span>After submitting these details, Please share the payment receipt on Whatsapp separately.<p>
+                            Click here to submit the Order details via WhatsApp</p></span>
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer / Contact -->
+    <footer id="contact" class="bg-gray-900 text-gray-300 py-12">
+        <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-8">
+            <div class="space-y-3">
+                <h3 class="text-white text-lg font-bold">Yaady's Millet Roti Meals</h3>
+                <p class="text-sm text-gray-400">Serving fresh, traditional millet meals to fuel your healthy lifestyle
+                    daily.</p>
+                <h2>Yaady's Pickup Point</h2>
+                <!-- Example iframe from Google Maps -->
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3807.454638785459!2d78.37992407591045!3d17.38995610272972!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTfCsDIzJzIzLjgiTiA3OMKwMjInNTcuMCJF!5e0!3m2!1sen!2sin!4v1785842302135!5m2!1sen!2sin"
+                    min-width="300" height="300" style="border:0;" allowfullscreen="" loading="lazy">
+                </iframe>
+                <div class="text-xs text-gray-500 pt-2">FSSAI Lic. No: Registered Kitchen</div>
+            </div>
+
+            <div class="space-y-2">
+                <h4 class="text-white font-semibold">Kitchen Hours</h4>
+                <p class="text-sm text-gray-400">Morning: 5:30 AM – Night 12:00 AM</p>
+                <p class="text-sm text-amber-400 font-medium pt-1"><i class="fa-solid fa-phone"></i> Direct WhatsApp:
+                    +91 9000001690</p>
+            </div>
+
+            <div class="space-y-3">
+                <h4 class="text-white font-semibold">Quick Order Links</h4>
+                <div class="flex space-x-3">
+                    <button onclick="openSmartLink('zomato')"
+                        class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 px-4 rounded-lg">
+                        Zomato
+                    </button>
+                    <button onclick="openSmartLink('swiggy')"
+                        class="bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold py-2 px-4 rounded-lg">
+                        Swiggy
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-6xl mx-auto px-4 mt-8 pt-6 border-t border-gray-800 text-center text-xs text-gray-500">
+            © 2026 Yaady's Kitchen. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Script Logic -->
+    <script>
+        const RESTAURANT_CONFIG = {
+            whatsappNumber: "919000001690", // Destination WhatsApp Number
+            upiId: "9000001690@ybl",      // Replace with your actual UPI VPA
+            payeeName: "Yaadys Kitchen",     // Restaurant Payee Name
+            zomatoWebUrl: "https://www.zomato.com/hyderabad/yaadys-millet-roti-meals-rajendra-nagar/order",
+            swiggyWebUrl: "https://www.swiggy.com/city/hyderabad/yaadys-millet-roti-meals-manikonda-rest1411294"
+        };
+
+        // Interactive Menu Data
+        const MENU_DATA = [
+            {
+                id: 1,
+                name: "Jowar Rotis (2 Pcs)",
+                price: 49,
+                desc: "2 Pieces of fresh Soft Jowar Rotis.",
+                img: "images/Jowar-rotis.jpg",
+                qty: 0
+            },
+            {
+                id: 2,
+                name: "Ragi Rotis (2 Pcs)",
+                price: 49,
+                desc: "2 Pieces of Fresh Finger-Millet (Ragi) Rotis.",
+                img: "images/Ragi-rotis.jpg",
+                qty: 0
+            },
+            {
+                id: 3,
+                name: "Bajra Rotis (2 Pcs)",
+                price: 49,
+                desc: "2 Pieces of Fresh Bajra Rotis.",
+                img: "images/Bajra-rotis.png",
+                qty: 0
+            }
+        ];
+
+        let activeOrderData = null;
+
+        // Render Menu Items
+        function renderMenu() {
+            const container = document.getElementById('menuItemsList');
+            container.innerHTML = MENU_DATA.map((item, index) => `
+                <div class="flex flex-col sm:flex-row items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-200 gap-4">
+                    <div class="flex items-center space-x-4 w-full sm:w-auto">
+                        <img src="${item.img}" alt="${item.name}" class="w-20 h-20 rounded-xl object-cover flex-shrink-0">
+                        <div>
+                            <h4 class="font-bold text-gray-900">${item.name}</h4>
+                            <p class="text-xs text-gray-500 line-clamp-2 max-w-xs">${item.desc}</p>
+                            <span class="text-amber-700 font-bold text-sm mt-1 block">₹${item.price}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 bg-white px-3 py-1.5 rounded-xl border border-gray-300">
+                        <button type="button" onclick="changeQty(${index}, -1)" class="w-8 h-8 rounded-lg bg-gray-100 text-gray-700 hover:bg-amber-600 hover:text-white font-bold transition flex items-center justify-center">-</button>
+                        <span class="font-bold text-gray-900 w-6 text-center" id="qty-${index}">${item.qty}</span>
+                        <button type="button" onclick="changeQty(${index}, 1)" class="w-8 h-8 rounded-lg bg-gray-100 text-gray-700 hover:bg-amber-600 hover:text-white font-bold transition flex items-center justify-center">+</button>
+                    </div>
+                </div>
+            `).join('');
+            updateSummary();
+        }
+
+        // Handle Quantity Adjustments
+        function changeQty(index, change) {
+            if (MENU_DATA[index].qty + change >= 0) {
+                MENU_DATA[index].qty += change;
+                document.getElementById(`qty-${index}`).innerText = MENU_DATA[index].qty;
+                updateSummary();
+            }
+        }
+
+        // Directly select an item from top section
+        function selectMenuItem(index) {
+            MENU_DATA[index].qty += 1;
+            renderMenu();
+        }
+
+        // Update Order Summary
+        function updateSummary() {
+            const summaryContainer = document.getElementById('summaryList');
+            const selectedItems = MENU_DATA.filter(item => item.qty > 0);
+
+            let total = 0;
+
+            if (selectedItems.length === 0) {
+                summaryContainer.innerHTML = `<p class="italic text-gray-400">No items selected yet. Select items above.</p>`;
+                document.getElementById('grandTotal').innerText = `₹0`;
+                return;
+            }
+
+            let summaryHTML = '';
+            selectedItems.forEach(item => {
+                const itemTotal = item.price * item.qty;
+                total += itemTotal;
+                summaryHTML += `
+                    <div class="flex justify-between items-center text-sm">
+                        <span>${item.name} x <strong>${item.qty}</strong></span>
+                        <span class="font-semibold text-gray-800">₹${itemTotal}</span>
+                    </div>
+                `;
+            });
+
+            summaryContainer.innerHTML = summaryHTML;
+            document.getElementById('grandTotal').innerText = `₹${total}`;
+        }
+
+        // Step 1: Validate Order and Show UPI Payment Section
+        function showPaymentSection(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('custName').value.trim();
+            const mobile = document.getElementById('custMobile').value.trim();
+            const address = document.getElementById('orderDetails').value.trim();
+            const selectedItems = MENU_DATA.filter(item => item.qty > 0);
+
+            if (selectedItems.length === 0) {
+                alert('Please select at least one menu item before proceeding.');
+                return;
+            }
+
+            const orderId = "YMRM-" + Math.floor(100000 + Math.random() * 900000);
+            const totalAmount = selectedItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+            // Save active order details
+            activeOrderData = { orderId, name, mobile, address, items: selectedItems, totalAmount };
+
+            // Construct Universal UPI Link (upi://pay?...)
+            const upiString = `upi://pay?pa=${encodeURIComponent(RESTAURANT_CONFIG.upiId)}&pn=${encodeURIComponent(RESTAURANT_CONFIG.payeeName)}&am=${totalAmount}&cu=INR&tn=${encodeURIComponent('Order ' + orderId)}`;
+
+            // Set links for direct tap / click
+            document.getElementById('upiDeepLink').href = upiString;
+            document.getElementById('qrDeepLink').href = upiString;
+            document.getElementById('displayUpiId').innerText = RESTAURANT_CONFIG.upiId;
+            document.getElementById('payAmountDisplay').innerText = `₹${totalAmount}`;
+
+            // Generate Dynamic QR Code Image via API
+            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
+            document.getElementById('upiQrCodeImg').src = qrApiUrl;
+
+            // Reveal Payment Section & Scroll Down
+            const paySection = document.getElementById('paymentModalSection');
+            paySection.classList.remove('hidden');
+            paySection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Step 2: Finalize Order - Generate Vector PDF and Open WhatsApp
+        function finaliseOrderAndSend() {
+            if (!activeOrderData) return;
+
+            const { orderId, name, mobile, address, items, totalAmount } = activeOrderData;
+
+            // 1. Generate & Download Vector PDF Receipt
+            generateVectorPDF(orderId, name, mobile, address, items, totalAmount);
+
+            // 2. Build WhatsApp Message
+            let orderItemsText = "";
+            items.forEach(item => {
+                orderItemsText += `• ${item.name} x ${item.qty} = ₹${item.price * item.qty}\n`;
+            });
+
+            const waMessage = `*NEW PAID ORDER RECEIPT #${orderId}*\n\n` +
+                `*Customer Details:*\n` +
+                `• *Name:* ${name}\n` +
+                `• *Mobile:* ${mobile}\n` +
+                `• *Order To Be Ready By:* ${address}\n\n` +
+                `*Order Items:*\n${orderItemsText}\n` +
+                `*Total Amount To Be Paid:* ₹${totalAmount}\n`;
+
+            const encodedMsg = encodeURIComponent(waMessage);
+            const waUrl = `https://wa.me/${RESTAURANT_CONFIG.whatsappNumber}?text=${encodedMsg}`;
+
+            // Open WhatsApp in new tab
+            window.open(waUrl, '_blank');
+        }
+
+        // Vector PDF Generator Function
+        function generateVectorPDF(orderId, name, mobile, address, items, totalAmount) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Branding Header
+            doc.setFillColor(217, 119, 6); // Brand Amber Color
+            doc.rect(0, 0, 210, 30, 'F');
+
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(20);
+            doc.setFont("helvetica", "bold");
+            doc.text("Yaady's Millet Roti Meals", 14, 18);
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "normal");
+            doc.text("Order Details & Amount To Be Paid", 14, 25);
+
+            // Order Metadata
+            doc.setTextColor(33, 37, 41);
+            doc.setFontSize(11);
+            doc.setFont("helvetica", "bold");
+            doc.text(`Order ID: #${orderId}`, 14, 42);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Date: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, 14, 48);
+
+            // Customer Details Box
+            doc.setFillColor(245, 245, 245);
+            doc.roundedRect(14, 55, 182, 35, 3, 3, 'F');
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Customer Details:", 20, 64);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Name: ${name}`, 20, 71);
+            doc.text(`Mobile: ${mobile}`, 20, 77);
+            doc.text(`Order to be ready before: ${address}`, 20, 83);
+
+            // Table Header
+            let y = 100;
+            doc.setFillColor(230, 230, 230);
+            doc.rect(14, y, 182, 8, 'F');
+            doc.setFont("helvetica", "bold");
+            doc.text("Item Name", 20, y + 6);
+            doc.text("Qty", 120, y + 6);
+            doc.text("Price", 150, y + 6);
+            doc.text("Total", 175, y + 6);
+
+            // Table Items
+            y += 14;
+            doc.setFont("helvetica", "normal");
+            items.forEach(item => {
+                doc.text(item.name, 20, y);
+                doc.text(item.qty.toString(), 122, y);
+                doc.text(`Rs. ${item.price}`, 150, y);
+                doc.text(`Rs. ${item.price * item.qty}`, 175, y);
+                y += 10;
+            });
+
+            // Total Section & Payment Status
+            doc.setLineWidth(0.5);
+            doc.line(14, y, 196, y);
+            y += 10;
+            doc.setFontSize(14);
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(217, 119, 6);
+            doc.text(`Grand Total: Rs. ${totalAmount}`, 120, y);
+
+            doc.setFontSize(10);
+            doc.setTextColor(5, 150, 105); // Green status
+            doc.text(`Payment To Be Paid`, 14, y);
+
+            // Footer Notice
+            doc.setFontSize(9);
+            doc.setFont("helvetica", "italic");
+            doc.setTextColor(120, 120, 120);
+            doc.text("Thank you for ordering with Yaady's Kitchen! 100% Healthy & Homemade.", 14, y + 25);
+
+            // Download Vector PDF file
+            doc.save(`Order_${orderId}_YaadysKitchen.pdf`);
+        }
+
+        // Smart Link Handler
+        function openSmartLink(platform) {
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+            if (platform === 'zomato') {
+                if (isMobile) {
+                    window.location.href = RESTAURANT_CONFIG.zomatoWebUrl;
+                } else {
+                    window.open(RESTAURANT_CONFIG.zomatoWebUrl, '_blank');
+                }
+            } else if (platform === 'swiggy') {
+                if (isMobile) {
+                    window.location.href = RESTAURANT_CONFIG.swiggyWebUrl;
+                } else {
+                    window.open(RESTAURANT_CONFIG.swiggyWebUrl, '_blank');
+                }
+            }
+        }
+
+        // Initialize Menu on Load
+        document.addEventListener('DOMContentLoaded', renderMenu);
+    </script>
+</body>
+
+</html>
