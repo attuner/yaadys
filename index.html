@@ -1,682 +1,722 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yaady's Millet Roti Meals - Fresh, Healthy & Traditional</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            amber: '#D97706',
-                            green: '#059669',
-                            dark: '#111827',
-                            cream: '#FEF3C7',
-                            zomato: '#CB202D',
-                            swiggy: '#FC8019'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- jsPDF Library for Vector PDF Generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Yaady's Millet Roti Meals - Orders</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --primary: #c92a2a;
+      --primary-hover: #a61e1e;
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --text: #212529;
+      --border: #dee2e6;
+    }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); margin: 0; padding: 16px; padding-bottom: 90px; }
+    .container { max-width: 600px; margin: 0 auto; }
+    .card { background: var(--card); border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 16px; }
+    h2, h3 { margin-top: 0; color: #111; }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: #495057; }
+    input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    /* Persistent Top Warning Banner */
+    .top-warning-banner {
+      background: #fff3bf;
+      color: #7f5f00;
+      border: 1px solid #ffe066;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    /* Home Delivery Banner */
+    .delivery-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-left: 4px solid #e03131;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .delivery-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .delivery-header span { font-size: 14px; font-weight: 700; color: #2b2b2b; }
+    .delivery-apps { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .app-link {
+      display: flex; align-items: center; justify-content: center; padding: 9px 4px;
+      border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 700; color: #fff;
+    }
+    .btn-zomato { background: #cb202d; }
+    .btn-swiggy { background: #fc8019; }
+    .btn-toing { background: #2f3640; }
+
+    /* Category Navigation */
+    .category-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin: 16px 0; scrollbar-width: thin; }
+    .cat-btn {
+      white-space: nowrap; padding: 8px 16px; border: 1px solid var(--border); background: #fff;
+      border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; color: #495057;
+    }
+    .cat-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* Food Cards */
+    .menu-item { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 16px; overflow: hidden; background: #fff; }
+    .menu-item img { width: 100%; height: 180px; object-fit: cover; background: #f1f3f5; }
+    .item-body { padding: 12px 14px; }
+    .item-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+    .item-name { font-weight: 700; font-size: 16px; color: #111; }
+    .item-price { font-weight: 700; color: var(--primary); font-size: 16px; }
+    .item-desc { font-size: 13px; color: #6c757d; margin-bottom: 12px; }
+    
+    .item-actions { display: flex; justify-content: flex-end; align-items: center; min-height: 32px; }
+    .qty-controls { display: flex; align-items: center; gap: 10px; }
+    .qty-btn { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border); background: #f8f9fa; cursor: pointer; font-weight: bold; font-size: 16px; }
+    .qty-display { width: 20px; text-align: center; font-weight: bold; font-size: 15px; }
+
+    /* Live Loading Spinner */
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      animation: spin 1s linear infinite;
+      margin: 12px auto;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* Buttons */
+    .btn { display: block; width: 100%; padding: 12px; background: var(--primary); color: #fff; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; }
+    .btn:hover { background: var(--primary-hover); }
+    .btn-secondary { background: #6c757d; margin-top: 8px; }
+    .btn-upi-pay { background: #5c7cfa; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; border-radius: 6px; padding: 12px; font-weight: 700; font-size: 15px; margin-top: 10px; }
+    .btn-upi-pay:hover { background: #4263eb; }
+    .btn-whatsapp { background: #25d366; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; text-decoration: none; border-radius: 6px; padding: 12px; font-weight: 600; font-size: 14px; }
+    .btn-whatsapp:hover { background: #1eb956; }
+    .btn-download { background: #1971c2; margin-top: 10px; }
+    .btn-download:hover { background: #1864ab; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    #live-order-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; background: #212529; color: #fff;
+      padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100;
+    }
+    .live-total { font-size: 17px; font-weight: bold; color: #ffd43b; }
+    .live-btn { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+
+    #live-drawer { background: #fdfdfd; border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-top: 15px; font-size: 13px; }
+    
+    #receipt-target, #savable-receipt { background: #ffffff; color: #000000; padding: 20px; border: 1px dashed #adb5bd; border-radius: 8px; margin-bottom: 16px; text-align: left; }
+    .receipt-header { text-align: center; border-bottom: 1px dashed #ced4da; padding-bottom: 8px; margin-bottom: 10px; }
+    .receipt-line { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; }
+    .receipt-total { border-top: 1px solid #212529; padding-top: 8px; font-weight: bold; font-size: 15px; margin-top: 8px; }
+
+    /* Payment Box */
+    .payment-box {
+      background: #f8f9fa;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 14px 0;
+      text-align: center;
+    }
+    .qr-link-wrapper {
+      display: inline-block;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .qr-container {
+      margin: 10px auto;
+      width: 170px;
+      height: 170px;
+      background: #fff;
+      padding: 8px;
+      border: 2px solid #ced4da;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .qr-container:hover {
+      transform: scale(1.02);
+      border-color: var(--primary);
+    }
+    .qr-container img { width: 100%; height: 100%; object-fit: contain; }
+    .upi-badge {
+      display: inline-flex;
+      align-items: center;
+      background: #e9ecef;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 14px;
+      color: #333;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .copy-btn {
+      background: #dee2e6;
+      border: none;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .hidden { display: none !important; }
+    .info-banner { background: #fff3cd; color: #856404; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 14px; }
+    .closed-banner { background: #ffc9c9; color: #c92a2a; padding: 16px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 16px; }
+    .out-of-stock-tag { background: #fa5252; color: #fff; font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; }
+    .menu-item.disabled { opacity: 0.55; }
+  </style>
 </head>
+<body>
 
-<body class="bg-amber-50/30 text-gray-800 font-sans antialiased">
+<div class="container">
+  <!-- Top Warning Alert -->
+  <div class="top-warning-banner">
+    ⚠️ Please keep this page open and do not refresh it while placing your order..
+  </div>
 
-    <!-- Header / Navigation -->
-    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-amber-100">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <span class="text-2xl">🌾</span>
-                <span class="text-xl font-bold text-gray-900 tracking-tight">Yaady's <span class="text-amber-600">Millet
-                        Roti Meals</span></span>
-            </div>
-            <nav class="hidden md:flex space-x-6 font-medium text-gray-600">
-                <a href="#about" class="hover:text-amber-600 transition">About Us</a>
-                <a href="#menu" class="hover:text-amber-600 transition">Our Menu</a>
-                <a href="#order-section" class="hover:text-amber-600 transition">Order Online</a>
-                <a href="#contact" class="hover:text-amber-600 transition">Contact</a>
-            </nav>
-            <a href="#order-section"
-                class="bg-amber-600 text-white px-4 py-2 rounded-full font-semibold shadow hover:bg-amber-700 transition text-sm">
-                Order Now
-            </a>
+  <!-- Delivery Partners -->
+  <div class="delivery-card">
+    <div class="delivery-header">
+      <span>🛵 Want Doorstep Delivery Instead?</span>
+    </div>
+    <div class="delivery-apps">
+      <a href="https://www.zomato.com/hyderabad/yaadys-millet-roti-meals-rajendra-nagar/order" target="_blank" rel="noopener noreferrer" class="app-link btn-zomato">Zomato</a>
+      <a href="https://www.swiggy.com/city/hyderabad/yaadys-millet-roti-meals-manikonda-rest1411294" target="_blank" rel="noopener noreferrer" class="app-link btn-swiggy">Swiggy</a>
+      <a href="https://toing.app" target="_blank" rel="noopener noreferrer" class="app-link btn-toing">Toing</a>
+    </div>
+  </div>
+
+  <!-- 1. Order Input View -->
+  <div id="step-order" class="card">
+    <h2><span class="text-2xl">🌾</span>Yaady's Millet Roti Meals</h2>
+    
+    <p style="margin-top:-6px; font-size:13px; color:#6c757d;">We accept Pickup Only orders. Locate us <a href="https://maps.app.goo.gl/3vTmmsbHN5kg98qF6" target="_blank" rel="noopener noreferrer">here.</a></p>
+    
+    
+    <div id="closed-message" class="hidden"></div>
+
+    <div id="order-inputs">
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input type="text" id="cust-name" required />
+      </div>
+
+      <div class="form-group">
+        <label>Mobile Number *</label>
+        <input type="tel" id="cust-phone" maxlength="10" required />
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Pickup Date *</label>
+          <input type="date" id="pickup-date" required />
         </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="relative bg-gradient-to-br from-amber-100 via-orange-50 to-emerald-50 py-16 md:py-24">
-        <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
-            <div class="space-y-6 text-center md:text-left">
-                <span
-                    class="inline-block bg-amber-200/60 text-amber-900 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">
-                    🌱 100% Wholesome & Gluten-Free Rotis
-                </span>
-                <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
-                    Pure Taste, Ancient Grains.<br />
-                    <span class="text-amber-600">Hot Millet Roti Meals.</span>
-                </h1>
-                <p class="text-gray-600 text-base md:text-lg">
-                    Experience traditional Indian home cooking enriched with Jowar, Ragi, and Bajra. Freshly prepared
-                    daily and delivered hot to your doorstep.
-                </p>
-
-                <!-- Smart Link Order Buttons -->
-                <div class="pt-4 space-y-3 sm:space-y-0 sm:flex sm:space-x-3 justify-center md:justify-start">
-                    <a href="#order-section"
-                        class="flex items-center justify-center space-x-2 bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition duration-200 transform hover:-translate-y-0.5">
-                        <i class="fa-solid fa-basket-shopping"></i>
-                        <span>Order Direct & Pick-up</span>
-                    </a>
-                    <a href="javascript:void(0)" onclick="openSmartLink('zomato')"
-                        class="flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-5 rounded-xl shadow-lg transition duration-200 transform hover:-translate-y-0.5">
-                        <i class="fa-solid fa-utensils"></i>
-                        <span>Zomato</span>
-                    </a>
-                    <a href="javascript:void(0)" onclick="openSmartLink('swiggy')"
-                        class="flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-5 rounded-xl shadow-lg transition duration-200 transform hover:-translate-y-0.5">
-                        <i class="fa-solid fa-bag-shopping"></i>
-                        <span>Swiggy</span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Hero Image Banner -->
-            <div class="relative flex justify-center">
-                <div class="w-full max-w-md bg-white p-4 rounded-3xl shadow-xl border border-amber-100">
-                    <img src="images/Jowar-rotis.jpg" alt="Millet Roti Meal Thali"
-                        class="rounded-2xl object-cover h-72 w-full">
-                    <div class="mt-4 flex justify-between items-center text-sm font-semibold text-gray-700 px-2">
-                        <span>🔥 Freshly Prepared</span>
-                        <span class="text-emerald-600">★ 4.8 Rating</span>
-                    </div>
-                </div>
-            </div>
+        <div class="form-group">
+          <label>Pickup Time *</label>
+          <input type="time" id="pickup-time" required />
         </div>
-    </section>
+      </div>
 
-    <!-- Why Choose Millet Section -->
-    <section id="about" class="py-16 bg-white">
-        <div class="max-w-6xl mx-auto px-4 text-center">
-            <h2 class="text-3xl font-bold text-gray-900">Why Choose Yaady's Millets?</h2>
-            <p class="text-gray-600 mt-2 max-w-xl mx-auto">Sustainably grown ancient grains that nourish your body while
-                giving you authentic homemade flavor.</p>
+      <h3 style="margin-top: 20px; margin-bottom: 6px;">Select Dishes</h3>
+      <div class="category-tabs" id="cat-nav">
+        <button class="cat-btn active" onclick="filterCategory('Biryanis', this)">Biryanis</button>
+        <button class="cat-btn" onclick="filterCategory('Starters', this)">Starters</button>
+        <button class="cat-btn" onclick="filterCategory('Curries & Breads', this)">Curries & Breads</button>
+        <button class="cat-btn" onclick="filterCategory('Desserts', this)">Desserts</button>
+        <button class="cat-btn" onclick="filterCategory('Beverages', this)">Beverages</button>
+      </div>
 
-            <div class="grid md:grid-cols-3 gap-8 mt-12">
-                <div class="p-6 bg-amber-50/50 rounded-2xl border border-amber-100 text-center space-y-3">
-                    <div
-                        class="w-12 h-12 bg-amber-200 text-amber-800 rounded-full flex items-center justify-center mx-auto text-xl">
-                        🌾</div>
-                    <h3 class="text-lg font-bold text-gray-900">100% Whole Grain</h3>
-                    <p class="text-sm text-gray-600">Packed with essential minerals, high fiber, and complex carbs to
-                        keep you energized all day.</p>
-                </div>
-                <div class="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 text-center space-y-3">
-                    <div
-                        class="w-12 h-12 bg-emerald-200 text-emerald-800 rounded-full flex items-center justify-center mx-auto text-xl">
-                        💚</div>
-                    <h3 class="text-lg font-bold text-gray-900">Diabetes & Heart Friendly</h3>
-                    <p class="text-sm text-gray-600">Low glycemic index meal options that promote steady glucose levels
-                        and balanced digestion.</p>
-                </div>
-                <div class="p-6 bg-orange-50/50 rounded-2xl border border-orange-100 text-center space-y-3">
-                    <div
-                        class="w-12 h-12 bg-orange-200 text-orange-800 rounded-full flex items-center justify-center mx-auto text-xl">
-                        👩‍🍳</div>
-                    <h3 class="text-lg font-bold text-gray-900">Authentic Home Recipes</h3>
-                    <p class="text-sm text-gray-600">Prepared in a clean kitchen environment using traditional
-                        slow-cooking techniques and fresh spices.</p>
-                </div>
-            </div>
+      <div id="menu-list"></div>
+
+      <div id="live-drawer">
+        <strong style="display:block; margin-bottom:6px;">Live Order Summary:</strong>
+        <div id="live-items-list" style="color: #6c757d;">No items selected yet.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Review View -->
+  <div id="step-review" class="card hidden">
+    <h2>Review Your Order</h2>
+    <div class="info-banner">Please review your items. Next step: Make UPI payment to confirm your order.</div>
+
+    <div id="receipt-target">
+      <div class="receipt-header">
+        <h3 style="margin:0;">YAADY'S MILLET ROTI MEALS</h3>
+        <span style="font-size: 11px; color: #555;" id="rcpt-timestamp"></span>
+      </div>
+      <div class="receipt-line"><strong>Name:</strong> <span id="rcpt-name"></span></div>
+      <div class="receipt-line"><strong>Mobile:</strong> <span id="rcpt-phone"></span></div>
+      <div class="receipt-line"><strong>Pickup:</strong> <span id="rcpt-datetime"></span></div>
+      <hr style="border: 0; border-top: 1px dashed #ced4da; margin: 8px 0;" />
+      <div id="rcpt-items"></div>
+      <div class="receipt-line receipt-total">
+        <span>Total Payable:</span>
+        <span>₹<span id="rcpt-total">0</span></span>
+      </div>
+    </div>
+
+    <button id="submit-btn" class="btn" onclick="sendOrder()">Confirm & Place Order</button>
+    <button class="btn btn-secondary" onclick="showOrderForm()">Back to Edit</button>
+  </div>
+
+  <!-- 3. Direct Payment Screen (Appears immediately after submission) -->
+  <div id="step-payment" class="card hidden" style="text-align: center;">
+    <h2 style="color: #2b8a3e;">Complete Payment to Place Order</h2>
+    <p style="color: #495057; font-size: 14px;">Please complete UPI payment below. Once verified, your order will be accepted.</p>
+
+    <div class="payment-box">
+      <div style="font-size: 13px; color: #6c757d; margin-bottom: 4px;">Order ID: <strong id="pay-order-id" style="color: var(--primary);"></strong></div>
+      <h3 style="margin: 0; font-size: 18px;">Pay Amount: <span id="pay-amount-display" style="color: var(--primary);"></span></h3>
+      
+      <!-- Clickable QR Code -->
+      <a id="upi-qr-link" href="#" class="qr-link-wrapper" title="Click to Pay directly with UPI app">
+        <div class="qr-container">
+          <img id="upi-qr-image" src="" alt="UPI QR Code - Click to Pay" />
         </div>
-    </section>
+      </a>
+      <div style="font-size: 12px; color: #1971c2; font-weight: 600; margin-bottom: 8px;">👆 Tap QR code or button below to launch UPI App</div>
 
-    <!-- Menu Highlights Section -->
-    <section id="menu" class="py-16 bg-amber-50/30 border-t border-b border-amber-100">
-        <div class="max-w-6xl mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-gray-900">Featured Meals & Rotis</h2>
-                <p class="text-gray-600 mt-2">Explore our signature millet-based dishes</p>
-            </div>
+      <!-- Direct UPI App Launch Button -->
+      <a id="direct-upi-btn" href="#" class="btn-upi-pay">
+        ⚡ Pay ₹<span id="btn-pay-amount">0</span> via UPI App
+      </a>
 
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Item 1 -->
-                <div class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition">
-                    <img src=images/Jowar-rotis.jpg alt="Jowar Rotis" class="h-48 w-full object-cover">
-                    <div class="p-6 space-y-3">
-                        <div class="flex justify-between items-start">
-                            <h3 class="font-bold text-lg text-gray-900">Jowar Roti (2 Pcs)</h3>
-                            <span
-                                class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2 py-1 rounded">Bestseller</span>
-                        </div>
-                        <p class="text-sm text-gray-600">2 Warm Soft Yellow Jowar Rotis.</p>
-                        <div class="pt-2 flex justify-between items-center">
-                            <span class="text-xl font-bold text-amber-700">₹49</span>
-                            <a href="#order-section" onclick="selectMenuItem(0)"
-                                class="text-xs bg-amber-600 text-white hover:bg-amber-700 font-bold px-4 py-2 rounded-full transition">Order
-                                Now</a>
-                        </div>
-                    </div>
-                </div>
+      <div style="margin-top: 10px;">
+        <span class="upi-badge">
+          <span>9000001690@upi</span>
+          <button class="copy-btn" onclick="copyUpiId()">Copy</button>
+        </span>
+      </div>
+      <p style="font-size: 11px; color: #6c757d; margin-top: 8px; margin-bottom: 0;">Order ID auto-filled in remarks: <strong id="remarks-id-preview"></strong></p>
+    </div>
 
-                <!-- Item 2 -->
-                <div class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition">
-                    <img src="images/Ragi-rotis.jpg" alt="Ragi Rotis" class="h-48 w-full object-cover">
-                    <div class="p-6 space-y-3">
-                        <div class="flex justify-between items-start">
-                            <h3 class="font-bold text-lg text-gray-900">Ragi Rotis (2 Pcs)</h3>
-                            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-1 rounded">High
-                                Calcium</span>
-                        </div>
-                        <p class="text-sm text-gray-600">2 Fresh Finger-Millet (Ragi) Rotis.</p>
-                        <div class="pt-2 flex justify-between items-center">
-                            <span class="text-xl font-bold text-amber-700">₹49</span>
-                            <a href="#order-section" onclick="selectMenuItem(1)"
-                                class="text-xs bg-amber-600 text-white hover:bg-amber-700 font-bold px-4 py-2 rounded-full transition">Order
-                                Now</a>
-                        </div>
-                    </div>
-                </div>
+    <a id="wa-contact-btn" href="#" target="_blank" class="btn-whatsapp">
+      💬 If your order is taking too long to be confirmed even after payment, CLICK HERE to request confirmation via WhatsApp.
+    </a>
 
-                <!-- Item 3 -->
-                <div class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition">
-                    <img src="images/Bajra-rotis.png" alt="Bajra Rotis" class="h-48 w-full object-cover">
-                    <div class="p-6 space-y-3">
-                        <div class="flex justify-between items-start">
-                            <h3 class="font-bold text-lg text-gray-900">Bajra Rotis (2 Pcs)</h3>
-                            <span class="bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-1 rounded">Family
-                                Pick</span>
-                        </div>
-                        <p class="text-sm text-gray-600">2 Bajra Rotis.</p>
-                        <div class="pt-2 flex justify-between items-center">
-                            <span class="text-xl font-bold text-amber-700">₹49</span>
-                            <a href="#order-section" onclick="selectMenuItem(2)"
-                                class="text-xs bg-amber-600 text-white hover:bg-amber-700 font-bold px-4 py-2 rounded-full transition">Order
-                                Now</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div style="margin-top: 16px; padding: 12px; background: #e7f5ff; border-radius: 8px; border: 1px solid #d0ebff;">
+      <div class="spinner"></div>
+      <div style="font-size: 13px; color: #1971c2; font-weight: 600;">Waiting for kitchen to confirm your payment...</div>
+      <div style="font-size: 11px; color: #6c757d; margin-top: 4px;">This page will automatically update once accepted.</div>
+    </div>
+  </div>
 
-    <!-- Interactive Direct Order Section -->
-    <section id="order-section" class="py-16 bg-gradient-to-b from-white to-amber-50/50">
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="text-center mb-10">
-                <span
-                    class="bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Fast
-                    Direct Ordering</span>
-                <h2 class="text-3xl font-bold text-gray-900 mt-2">Place Your Order Direct & Collect from Yaady's Pickup
-                    Point</h2>
-                <p class="text-gray-600 text-sm mt-1">Select your items, complete payment via UPI, and receive your
-                    order receipt!</p>
-            </div>
+  <!-- 4. Final Accepted Screen with Savable Details -->
+  <div id="step-success" class="card hidden" style="text-align: center;">
+    <div style="font-size: 48px; color: #2b8a3e; margin-bottom: 4px;">✓</div>
+    <h2 style="margin-bottom: 6px;">Your order has been successfully placed!</h2>
+    <p style="color: #495057; font-size: 14px; line-height: 1.5; margin-bottom: 16px;">
+      We will notify you once your order is ready for pickup. Locate us <a href="https://maps.app.goo.gl/3vTmmsbHN5kg98qF6" target="_blank" rel="noopener noreferrer">here.</a>
+    </p>
 
-            <form id="orderForm" onsubmit="showPaymentSection(event)"
-                class="bg-white p-6 md:p-8 rounded-3xl shadow-xl border border-amber-100 space-y-8">
+    <a id="wa-followup-btn" href="#" target="_blank" class="btn-whatsapp" style="margin-bottom: 16px;">
+      💬 Contact us on WhatsApp for an update
+    </a>
 
-                <!-- 1. Customer Details -->
-                <div class="space-y-4">
-                    <h3 class="text-lg font-bold text-gray-900 border-b pb-2 flex items-center space-x-2">
-                        <span
-                            class="bg-amber-600 text-white w-6 h-6 rounded-full inline-flex items-center justify-center text-xs">1</span>
-                        <span>Customer Information</span>
-                    </h3>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="custName"
-                                class="block text-xs font-semibold text-gray-700 uppercase mb-1">Customer Name & Address
-                                *</label>
-                            <input type="text" id="custName" required
-                                placeholder="e.g. Ramesh Kumar, YSR Secretariat Colony"
-                                class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
-                        </div>
-                        <div>
-                            <label for="custMobile"
-                                class="block text-xs font-semibold text-gray-700 uppercase mb-1">Mobile Number *</label>
-                            <input type="tel" id="custMobile" pattern="[0-9]{10}" required
-                                placeholder="10-digit mobile number"
-                                class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
-                        </div>
-                    </div>
-                    <div>
-                        <label for="orderDetails" class="block text-xs font-semibold text-gray-700 uppercase mb-1">Order
-                            To Be Ready By: Date & Time *</label>
-                        <textarea id="orderDetails" rows="2" required placeholder="Enter Date and Time of Pickup"
-                            class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
-                    </div>
-                </div>
+    <!-- Savable Receipt Card -->
+    <h3 style="margin-top: 16px; margin-bottom: 8px; text-align: left;">Savable Order Details</h3>
+    <div id="savable-receipt">
+      <div class="receipt-header">
+        <h3 style="margin:0;">YAADY'S MILLET ROTI MEALS</h3>
+        <span style="font-size: 11px; color: #555;">CONFIRMED TAKEAWAY RECEIPT</span>
+      </div>
+      <div class="receipt-line"><strong>Order ID:</strong> <span id="conf-id"></span></div>
+      <div class="receipt-line"><strong>Customer:</strong> <span id="conf-name"></span></div>
+      <div class="receipt-line"><strong>Mobile:</strong> <span id="conf-phone"></span></div>
+      <div class="receipt-line"><strong>Pickup Slot:</strong> <span id="conf-slot"></span></div>
+      <hr style="border: 0; border-top: 1px dashed #ced4da; margin: 8px 0;" />
+      <div id="conf-items"></div>
+      <div class="receipt-line receipt-total">
+        <span>Total Amount:</span>
+        <span id="conf-total" style="color:var(--primary); font-weight:bold;"></span>
+      </div>
+    </div>
 
-                <!-- 2. Menu Selection -->
-                <div class="space-y-4">
-                    <h3 class="text-lg font-bold text-gray-900 border-b pb-2 flex items-center space-x-2">
-                        <span
-                            class="bg-amber-600 text-white w-6 h-6 rounded-full inline-flex items-center justify-center text-xs">2</span>
-                        <span>Select Menu Items</span>
-                    </h3>
+    <button class="btn btn-download" onclick="downloadReceipt()">📥 Download Receipt</button>
+    <button class="btn btn-secondary" onclick="window.location.reload()">Place Another Order</button>
+  </div>
 
-                    <div class="space-y-4" id="menuItemsList">
-                        <!-- Menu Items injected via Javascript -->
-                    </div>
-                </div>
+  <!-- 5. Rejected Screen -->
+  <div id="step-rejected" class="card hidden" style="text-align: center;">
+    <div style="font-size: 48px; color: #c92a2a; margin-bottom: 8px;">✕</div>
+    <h2>Order Could Not Be Accepted</h2>
+    <p style="color: #495057;">The kitchen is currently overloaded or items are unavailable. Please try again later or order via Swiggy / Zomato.</p>
+    <button class="btn" onclick="window.location.reload()">Back to Menu</button>
+  </div>
+</div>
 
-                <!-- 3. Order Total & Summary -->
-                <div class="bg-amber-50 p-6 rounded-2xl border border-amber-200 space-y-3">
-                    <h4 class="font-bold text-gray-900 border-b border-amber-200 pb-2">Order Summary</h4>
-                    <div id="summaryList" class="text-sm space-y-1 text-gray-600">
-                        <p class="italic text-gray-400">No items selected yet.</p>
-                    </div>
-                    <div
-                        class="border-t border-amber-200 pt-3 flex justify-between items-center text-lg font-extrabold text-gray-900">
-                        <span>Total Payable Amount:</span>
-                        <span id="grandTotal" class="text-2xl text-amber-700">₹0</span>
-                    </div>
-                </div>
+<!-- Sticky Bottom Bar -->
+<div id="live-order-bar" class="hidden">
+  <div>
+    <span id="bar-items-count">0 items</span> | <span class="live-total">₹<span id="bar-total">0</span></span>
+  </div>
+  <button class="live-btn" onclick="renderReview()">Review Order →</button>
+</div>
 
-                <!-- Proceed to Payment Button -->
-                <button type="submit"
-                    class="w-full bg-amber-600 hover:bg-amber-700 text-white text-lg font-bold py-4 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center space-x-3">
-                    <i class="fa-solid fa-credit-card"></i>
-                    <span>Proceed to UPI Payment</span>
-                </button>
-            </form>
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby746CKA4eNkpHZ6tLnreOj9rja4Y89ouNisTni8mNQUHs1yKF7gAe0EZmV7RGYC51D/exec";
+  const RESTAURANT_WHATSAPP = "919000001690";
+  const RESTAURANT_UPI_ID = "9000001690@upi";
 
-            <!-- 4. Dynamic UPI Payment Section (Initially Hidden) -->
-            <div id="paymentModalSection"
-                class="hidden mt-8 bg-white p-6 md:p-8 rounded-3xl shadow-xl border-2 border-amber-500 space-y-6">
-                <div class="text-center space-y-2 border-b pb-4">
-                    <span
-                        class="bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Step
-                        2 of 2</span>
-                    <h3 class="text-2xl font-bold text-gray-900">Make UPI Payment</h3>
-                    <p class="text-sm text-gray-600">Click the UPI ID or scan the QR Code using GPay, PhonePe, Paytm, or
-                        BHIM.</p>
-                </div>
+  const MENU = [
+    { id: 1, category: "Biryanis", name: "Hyderabadi Chicken Dum Biryani", price: 320, desc: "Aromatic basmati, chicken, mirchi salan & raita", img: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&q=80" },
+    { id: 2, category: "Biryanis", name: "Hyderabadi Mutton Biryani", price: 420, desc: "Slow cooked tender mutton with fragrant spices", img: "https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=600&q=80" },
+    { id: 3, category: "Starters", name: "Chicken 65 (Dry)", price: 240, desc: "Crispy fried spiced chicken with curry leaves", img: "https://images.unsplash.com/photo-1610057099431-d73a1c9d2f2f?w=600&q=80" },
+    { id: 4, category: "Starters", name: "Apollo Fish", price: 280, desc: "Hyderabadi spiced boneless fish fillets", img: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&q=80" },
+    { id: 5, category: "Curries & Breads", name: "Paneer Butter Masala + 2 Naan", price: 260, desc: "Cottage cheese in rich tomato-butter gravy", img: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600&q=80" },
+    { id: 6, category: "Curries & Breads", name: "Butter Chicken + 2 Naan", price: 290, desc: "Smokey chicken in creamy spiced gravy", img: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=600&q=80" },
+    { id: 7, category: "Desserts", name: "Double Ka Meetha", price: 120, desc: "Traditional Hyderabadi ghee-fried bread dessert", img: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&q=80" },
+    { id: 8, category: "Desserts", name: "Qubani Ka Meetha", price: 140, desc: "Stewed dried apricots with fresh cream", img: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=600&q=80" },
+    { id: 9, category: "Beverages", name: "Irani Chai Flask (Serves 2)", price: 80, desc: "Slow brewed creamy tea with Osmania biscuits", img: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=600&q=80" },
+    { id: 10, category: "Beverages", name: "Fresh Lime Soda", price: 60, desc: "Refreshing sweet & salted chilled lime soda", img: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=600&q=80" }
+  ];
 
-                <div class="grid md:grid-cols-2 gap-6 items-center">
-                    <!-- Restaurant UPI Details -->
-                    <div class="space-y-4 bg-amber-50 p-6 rounded-2xl border border-amber-200">
-                        <div class="flex justify-between items-center text-sm font-semibold text-gray-700">
-                            <span>Total Amount Due:</span>
-                            <span id="payAmountDisplay" class="text-xl font-bold text-amber-700">₹0</span>
-                        </div>
+  const cart = {};
+  let currentCategory = "Biryanis";
+  let outOfStockList = [];
+  let isStoreOpen = true;
+  let activeOrderId = null;
+  let activeTotal = 0;
+  let pollTimer = null;
 
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Restaurant UPI ID
-                                (Click to Pay)</label>
-                            <a id="upiDeepLink" href="#"
-                                class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border border-amber-300 hover:border-amber-600 transition group shadow-sm">
-                                <span id="displayUpiId" class="font-bold text-gray-900 text-base">9000001690@ybl</span>
-                                <span
-                                    class="text-xs bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg group-hover:bg-amber-700 transition">Pay
-                                    Now</span>
-                            </a>
-                        </div>
+  function formatTimeTo12Hour(timeStr) {
+    if (!timeStr) return "";
+    const parts = timeStr.split(":");
+    let h = parseInt(parts[0], 10);
+    const period = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    return `${h}:${parts[1]} ${period}`;
+  }
 
-                        <p class="text-xs text-gray-500">
-                            <i class="fa-solid fa-circle-info text-amber-600"></i> Tapping the UPI ID on mobile will
-                            launch your default UPI app pre-filled with the exact bill amount.
-                        </p>
-                    </div>
+  async function fetchStoreConfig() {
+    try {
+      const cacheBuster = `${SCRIPT_URL}?t=${new Date().getTime()}`;
+      const response = await fetch(cacheBuster);
+      const data = await response.json();
 
-                    <!-- Dynamic UPI QR Scanner -->
-                    <div
-                        class="flex flex-col items-center justify-center space-y-3 bg-gray-50 p-6 rounded-2xl border border-gray-200 text-center">
-                        <h4 class="font-bold text-gray-800 text-sm">Scan QR Code to Pay</h4>
+      isStoreOpen = data.storeOpen !== false;
+      outOfStockList = Array.isArray(data.outOfStock) ? data.outOfStock : [];
 
-                        <a id="qrDeepLink" href="#" class="block hover:opacity-90 transition">
-                            <img id="upiQrCodeImg" src="" alt="UPI QR Code"
-                                class="w-44 h-44 rounded-xl shadow border border-gray-300 bg-white p-2">
-                        </a>
+      if (!isStoreOpen) {
+        document.getElementById("order-inputs").classList.add("hidden");
+        const msgDiv = document.getElementById("closed-message");
+        msgDiv.className = "closed-banner";
+        msgDiv.innerText = "⚠️ We are currently CLOSED for takeaway pickup orders. Please order via Swiggy / Zomato / Toing above or check back later.";
+        msgDiv.classList.remove("hidden");
+        return;
+      }
+    } catch (err) {
+      console.warn("Could not load stock configuration.", err);
+    }
+    renderMenu();
+  }
 
-                        <span class="text-xs text-gray-500 font-medium">Click QR Code or Scan with any UPI
-                            Scanner</span>
-                    </div>
-                </div>
+  function renderMenu() {
+    const menuList = document.getElementById("menu-list");
+    menuList.innerHTML = "";
 
-                <!-- Final Order Placement Button -->
-                <button type="button" onclick="finaliseOrderAndSend()"
-                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-lg font-bold py-4 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center space-x-3">
-                    <i class="fa-brands fa-whatsapp text-2xl"></i>
-                    <span>After submitting these details, Please share the payment receipt on Whatsapp separately.<p>
-                            Click here to submit the Order details via WhatsApp</p></span>
-                </button>
-            </div>
+    const itemsToDisplay = MENU.filter(item => item.category === currentCategory);
 
-        </div>
-    </section>
+    itemsToDisplay.forEach(dish => {
+      if (cart[dish.id] === undefined) cart[dish.id] = 0;
+      const isSoldOut = outOfStockList.includes(dish.id);
 
-    <!-- Footer / Contact -->
-    <footer id="contact" class="bg-gray-900 text-gray-300 py-12">
-        <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-8">
-            <div class="space-y-3">
-                <h3 class="text-white text-lg font-bold">Yaady's Millet Roti Meals</h3>
-                <p class="text-sm text-gray-400">Serving fresh, traditional millet meals to fuel your healthy lifestyle
-                    daily.</p>
-                <h2>Yaady's Pickup Point</h2>
-                <!-- Example iframe from Google Maps -->
-                <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3807.454638785459!2d78.37992407591045!3d17.38995610272972!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTfCsDIzJzIzLjgiTiA3OMKwMjInNTcuMCJF!5e0!3m2!1sen!2sin!4v1785842302135!5m2!1sen!2sin"
-                    min-width="300" height="300" style="border:0;" allowfullscreen="" loading="lazy">
-                </iframe>
-                <div class="text-xs text-gray-500 pt-2">FSSAI Lic. No: Registered Kitchen</div>
-            </div>
-
-            <div class="space-y-2">
-                <h4 class="text-white font-semibold">Kitchen Hours</h4>
-                <p class="text-sm text-gray-400">Morning: 5:30 AM – Night 12:00 AM</p>
-                <p class="text-sm text-amber-400 font-medium pt-1"><i class="fa-solid fa-phone"></i> Direct WhatsApp:
-                    +91 9000001690</p>
-            </div>
-
-            <div class="space-y-3">
-                <h4 class="text-white font-semibold">Quick Order Links</h4>
-                <div class="flex space-x-3">
-                    <button onclick="openSmartLink('zomato')"
-                        class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 px-4 rounded-lg">
-                        Zomato
-                    </button>
-                    <button onclick="openSmartLink('swiggy')"
-                        class="bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold py-2 px-4 rounded-lg">
-                        Swiggy
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="max-w-6xl mx-auto px-4 mt-8 pt-6 border-t border-gray-800 text-center text-xs text-gray-500">
-            © 2026 Yaady's Kitchen. All rights reserved.
-        </div>
-    </footer>
-
-    <!-- Script Logic -->
-    <script>
-        const RESTAURANT_CONFIG = {
-            whatsappNumber: "919000001690", // Destination WhatsApp Number
-            upiId: "9000001690@ybl",      // Replace with your actual UPI VPA
-            payeeName: "Yaadys Kitchen",     // Restaurant Payee Name
-            zomatoWebUrl: "https://www.zomato.com/hyderabad/yaadys-millet-roti-meals-rajendra-nagar/order",
-            swiggyWebUrl: "https://www.swiggy.com/city/hyderabad/yaadys-millet-roti-meals-manikonda-rest1411294"
-        };
-
-        // Interactive Menu Data
-        const MENU_DATA = [
-            {
-                id: 1,
-                name: "Jowar Rotis (2 Pcs)",
-                price: 49,
-                desc: "2 Pieces of fresh Soft Jowar Rotis.",
-                img: "images/Jowar-rotis.jpg",
-                qty: 0
-            },
-            {
-                id: 2,
-                name: "Ragi Rotis (2 Pcs)",
-                price: 49,
-                desc: "2 Pieces of Fresh Finger-Millet (Ragi) Rotis.",
-                img: "images/Ragi-rotis.jpg",
-                qty: 0
-            },
-            {
-                id: 3,
-                name: "Bajra Rotis (2 Pcs)",
-                price: 49,
-                desc: "2 Pieces of Fresh Bajra Rotis.",
-                img: "images/Bajra-rotis.png",
-                qty: 0
+      const item = document.createElement("div");
+      item.className = `menu-item ${isSoldOut ? 'disabled' : ''}`;
+      item.innerHTML = `
+        <img src="${dish.img}" alt="${dish.name}" crossorigin="anonymous" loading="lazy" />
+        <div class="item-body">
+          <div class="item-top">
+            <span class="item-name">${dish.name}</span>
+            <span class="item-price">₹${dish.price}</span>
+          </div>
+          <div class="item-desc">${dish.desc}</div>
+          <div class="item-actions">
+            ${isSoldOut 
+              ? `<span class="out-of-stock-tag">Out of Stock</span>`
+              : `<div class="qty-controls">
+                  <button class="qty-btn" type="button" onclick="modifyQty(${dish.id}, -1)">-</button>
+                  <span class="qty-display" id="qty-${dish.id}">${cart[dish.id]}</span>
+                  <button class="qty-btn" type="button" onclick="modifyQty(${dish.id}, 1)">+</button>
+                </div>`
             }
-        ];
+          </div>
+        </div>
+      `;
+      menuList.appendChild(item);
+    });
+  }
 
-        let activeOrderData = null;
+  function filterCategory(cat, btn) {
+    currentCategory = cat;
+    document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderMenu();
+  }
 
-        // Render Menu Items
-        function renderMenu() {
-            const container = document.getElementById('menuItemsList');
-            container.innerHTML = MENU_DATA.map((item, index) => `
-                <div class="flex flex-col sm:flex-row items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-200 gap-4">
-                    <div class="flex items-center space-x-4 w-full sm:w-auto">
-                        <img src="${item.img}" alt="${item.name}" class="w-20 h-20 rounded-xl object-cover flex-shrink-0">
-                        <div>
-                            <h4 class="font-bold text-gray-900">${item.name}</h4>
-                            <p class="text-xs text-gray-500 line-clamp-2 max-w-xs">${item.desc}</p>
-                            <span class="text-amber-700 font-bold text-sm mt-1 block">₹${item.price}</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-3 bg-white px-3 py-1.5 rounded-xl border border-gray-300">
-                        <button type="button" onclick="changeQty(${index}, -1)" class="w-8 h-8 rounded-lg bg-gray-100 text-gray-700 hover:bg-amber-600 hover:text-white font-bold transition flex items-center justify-center">-</button>
-                        <span class="font-bold text-gray-900 w-6 text-center" id="qty-${index}">${item.qty}</span>
-                        <button type="button" onclick="changeQty(${index}, 1)" class="w-8 h-8 rounded-lg bg-gray-100 text-gray-700 hover:bg-amber-600 hover:text-white font-bold transition flex items-center justify-center">+</button>
-                    </div>
-                </div>
-            `).join('');
-            updateSummary();
+  function modifyQty(id, delta) {
+    cart[id] = Math.max(0, (cart[id] || 0) + delta);
+    const qtySpan = document.getElementById(`qty-${id}`);
+    if (qtySpan) qtySpan.innerText = cart[id];
+    updateLiveSummary();
+  }
+
+  function updateLiveSummary() {
+    let total = 0;
+    let count = 0;
+    const liveList = document.getElementById("live-items-list");
+    let summaryHtml = "";
+
+    MENU.forEach(dish => {
+      const q = cart[dish.id] || 0;
+      if (q > 0) {
+        count += q;
+        total += q * dish.price;
+        summaryHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+          <span>${q}x ${dish.name}</span>
+          <span>₹${q * dish.price}</span>
+        </div>`;
+      }
+    });
+
+    liveList.innerHTML = summaryHtml || "No items selected yet.";
+
+    const stickyBar = document.getElementById("live-order-bar");
+    if (count > 0) {
+      stickyBar.classList.remove("hidden");
+      document.getElementById("bar-items-count").innerText = `${count} item${count > 1 ? 's' : ''}`;
+      document.getElementById("bar-total").innerText = total;
+    } else {
+      stickyBar.classList.add("hidden");
+    }
+
+    return total;
+  }
+
+  function renderReview() {
+    const name = document.getElementById("cust-name").value.trim();
+    const phone = document.getElementById("cust-phone").value.trim();
+    const date = document.getElementById("pickup-date").value;
+    const time = document.getElementById("pickup-time").value;
+    const total = updateLiveSummary();
+
+    if (!name || !phone || !date || !time) {
+      alert("Please fill in all details (Name, Mobile, Pickup Date & Time).");
+      return;
+    }
+
+    if (!/^[6-9]\d{9}$/.test(phone)) {
+      alert("Please enter a valid 10-digit Indian mobile number.");
+      return;
+    }
+
+    if (total <= 0) {
+      alert("Please select at least 1 item from the menu.");
+      return;
+    }
+
+    document.getElementById("rcpt-timestamp").innerText = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+    document.getElementById("rcpt-name").innerText = name;
+    document.getElementById("rcpt-phone").innerText = phone;
+    document.getElementById("rcpt-datetime").innerText = `${date} at ${formatTimeTo12Hour(time)}`;
+    
+    const itemsNode = document.getElementById("rcpt-items");
+    itemsNode.innerHTML = "";
+    MENU.forEach(dish => {
+      if (cart[dish.id] > 0) {
+        itemsNode.innerHTML += `
+          <div class="receipt-line">
+            <span>${cart[dish.id]}x ${dish.name}</span>
+            <span>₹${cart[dish.id] * dish.price}</span>
+          </div>
+        `;
+      }
+    });
+
+    document.getElementById("rcpt-total").innerText = total;
+
+    document.getElementById("step-order").classList.add("hidden");
+    document.getElementById("live-order-bar").classList.add("hidden");
+    document.getElementById("step-review").classList.remove("hidden");
+    window.scrollTo(0, 0);
+  }
+
+  function showOrderForm() {
+    document.getElementById("step-review").classList.add("hidden");
+    document.getElementById("step-order").classList.remove("hidden");
+    updateLiveSummary();
+  }
+
+  async function sendOrder() {
+    const submitBtn = document.getElementById("submit-btn");
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Processing Order...";
+
+    try {
+      const receiptElement = document.getElementById("receipt-target");
+      const canvas = await html2canvas(receiptElement, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        logging: false
+      });
+      const imageBase64 = canvas.toDataURL("image/png");
+
+      const name = document.getElementById("cust-name").value.trim();
+      const phone = document.getElementById("cust-phone").value.trim();
+      const pickupDate = document.getElementById("pickup-date").value;
+      const pickupTimeFormatted = formatTimeTo12Hour(document.getElementById("pickup-time").value);
+      activeTotal = updateLiveSummary();
+      const totalAmount = `₹${activeTotal}`;
+      
+      activeOrderId = "YMR-" + Math.floor(1000 + Math.random() * 9000);
+
+      const itemsSummary = MENU
+        .filter(dish => cart[dish.id] > 0)
+        .map(dish => `${cart[dish.id]}x ${dish.name}`)
+        .join(", ");
+
+      const payload = {
+        orderId: activeOrderId,
+        name: name,
+        phone: phone,
+        pickupDate: pickupDate,
+        pickupTime: pickupTimeFormatted,
+        itemsSummary: itemsSummary,
+        totalPrice: totalAmount,
+        receiptImage: imageBase64
+      };
+
+      const response = await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+
+      const resData = await response.json();
+      if (resData.status === "success") {
+        // Direct transition to Payment Screen
+        document.getElementById("step-review").classList.add("hidden");
+        document.getElementById("step-payment").classList.remove("hidden");
+
+        // Populate Payment Box
+        document.getElementById("pay-order-id").innerText = activeOrderId;
+        document.getElementById("pay-amount-display").innerText = totalAmount;
+        document.getElementById("btn-pay-amount").innerText = activeTotal;
+        document.getElementById("remarks-id-preview").innerText = `Order ${activeOrderId}`;
+
+        // Populate Final Confirmation & Receipt Card
+        document.getElementById("conf-id").innerText = activeOrderId;
+        document.getElementById("conf-name").innerText = name;
+        document.getElementById("conf-phone").innerText = phone;
+        document.getElementById("conf-slot").innerText = `${pickupDate} at ${pickupTimeFormatted}`;
+        document.getElementById("conf-total").innerText = totalAmount;
+
+        const confItemsNode = document.getElementById("conf-items");
+        confItemsNode.innerHTML = "";
+        MENU.forEach(dish => {
+          if (cart[dish.id] > 0) {
+            confItemsNode.innerHTML += `
+              <div class="receipt-line">
+                <span>${cart[dish.id]}x ${dish.name}</span>
+                <span>₹${cart[dish.id] * dish.price}</span>
+              </div>
+            `;
+          }
+        });
+
+        // UPI Intent URI with remarks & exact amount
+        const upiPaymentUri = `upi://pay?pa=${RESTAURANT_UPI_ID}&pn=Yaadys%20Millet%20Roti%20Meals&am=${activeTotal}&cu=INR&tn=Order%20${activeOrderId}`;
+        
+        document.getElementById("direct-upi-btn").href = upiPaymentUri;
+        document.getElementById("upi-qr-link").href = upiPaymentUri;
+
+        const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=${encodeURIComponent(upiPaymentUri)}`;
+        document.getElementById("upi-qr-image").src = qrCodeUrl;
+
+        // WhatsApp links
+        const payWaMsg = `Hi Yaady's Kitchen, sharing payment proof for Order *${activeOrderId}* (Amount: ₹${activeTotal}).`;
+        document.getElementById("wa-contact-btn").href = `https://wa.me/${RESTAURANT_WHATSAPP}?text=${encodeURIComponent(payWaMsg)}`;
+
+        const followupWaMsg = `Hi Yaady's Kitchen, following up on my confirmed Order ID: *${activeOrderId}*.`;
+        document.getElementById("wa-followup-btn").href = `https://wa.me/${RESTAURANT_WHATSAPP}?text=${encodeURIComponent(followupWaMsg)}`;
+
+        // Start checking approval in Google Sheets
+        startStatusPolling(activeOrderId);
+      } else {
+        throw new Error(resData.message || "Failed to submit order.");
+      }
+    } catch (err) {
+      alert("Submission Error: " + err.message);
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Confirm & Place Order";
+    }
+  }
+
+  function startStatusPolling(orderId) {
+    if (pollTimer) clearInterval(pollTimer);
+
+    pollTimer = setInterval(async () => {
+      try {
+        const res = await fetch(`${SCRIPT_URL}?checkOrderId=${orderId}&t=${new Date().getTime()}`);
+        const data = await res.json();
+        const currentStatus = data.status || "";
+
+        // Transition directly when kitchen marks ACCEPTED in Google Sheets
+        if (currentStatus === "ACCEPTED" || currentStatus === "CONFIRMED" || currentStatus === "READY") {
+          clearInterval(pollTimer);
+          document.getElementById("step-payment").classList.add("hidden");
+          document.getElementById("step-success").classList.remove("hidden");
+        } 
+        else if (currentStatus === "REJECTED" || currentStatus === "CANCELLED") {
+          clearInterval(pollTimer);
+          document.getElementById("step-payment").classList.add("hidden");
+          document.getElementById("step-rejected").classList.remove("hidden");
         }
+      } catch (err) {
+        console.warn("Polling error:", err);
+      }
+    }, 3000);
+  }
 
-        // Handle Quantity Adjustments
-        function changeQty(index, change) {
-            if (MENU_DATA[index].qty + change >= 0) {
-                MENU_DATA[index].qty += change;
-                document.getElementById(`qty-${index}`).innerText = MENU_DATA[index].qty;
-                updateSummary();
-            }
-        }
+  function copyUpiId() {
+    navigator.clipboard.writeText(RESTAURANT_UPI_ID).then(() => {
+      alert("UPI ID copied: " + RESTAURANT_UPI_ID);
+    });
+  }
 
-        // Directly select an item from top section
-        function selectMenuItem(index) {
-            MENU_DATA[index].qty += 1;
-            renderMenu();
-        }
+  async function downloadReceipt() {
+    const receiptElem = document.getElementById("savable-receipt");
+    const canvas = await html2canvas(receiptElem, {
+      scale: 2,
+      backgroundColor: "#ffffff"
+    });
+    const link = document.createElement("a");
+    link.download = `Receipt_${activeOrderId}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }
 
-        // Update Order Summary
-        function updateSummary() {
-            const summaryContainer = document.getElementById('summaryList');
-            const selectedItems = MENU_DATA.filter(item => item.qty > 0);
-
-            let total = 0;
-
-            if (selectedItems.length === 0) {
-                summaryContainer.innerHTML = `<p class="italic text-gray-400">No items selected yet. Select items above.</p>`;
-                document.getElementById('grandTotal').innerText = `₹0`;
-                return;
-            }
-
-            let summaryHTML = '';
-            selectedItems.forEach(item => {
-                const itemTotal = item.price * item.qty;
-                total += itemTotal;
-                summaryHTML += `
-                    <div class="flex justify-between items-center text-sm">
-                        <span>${item.name} x <strong>${item.qty}</strong></span>
-                        <span class="font-semibold text-gray-800">₹${itemTotal}</span>
-                    </div>
-                `;
-            });
-
-            summaryContainer.innerHTML = summaryHTML;
-            document.getElementById('grandTotal').innerText = `₹${total}`;
-        }
-
-        // Step 1: Validate Order and Show UPI Payment Section
-        function showPaymentSection(event) {
-            event.preventDefault();
-
-            const name = document.getElementById('custName').value.trim();
-            const mobile = document.getElementById('custMobile').value.trim();
-            const address = document.getElementById('orderDetails').value.trim();
-            const selectedItems = MENU_DATA.filter(item => item.qty > 0);
-
-            if (selectedItems.length === 0) {
-                alert('Please select at least one menu item before proceeding.');
-                return;
-            }
-
-            const orderId = "YMRM-" + Math.floor(100000 + Math.random() * 900000);
-            const totalAmount = selectedItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
-
-            // Save active order details
-            activeOrderData = { orderId, name, mobile, address, items: selectedItems, totalAmount };
-
-            // Construct Universal UPI Link (upi://pay?...)
-            const upiString = `upi://pay?pa=${encodeURIComponent(RESTAURANT_CONFIG.upiId)}&pn=${encodeURIComponent(RESTAURANT_CONFIG.payeeName)}&am=${totalAmount}&cu=INR&tn=${encodeURIComponent('Order ' + orderId)}`;
-
-            // Set links for direct tap / click
-            document.getElementById('upiDeepLink').href = upiString;
-            document.getElementById('qrDeepLink').href = upiString;
-            document.getElementById('displayUpiId').innerText = RESTAURANT_CONFIG.upiId;
-            document.getElementById('payAmountDisplay').innerText = `₹${totalAmount}`;
-
-            // Generate Dynamic QR Code Image via API
-            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
-            document.getElementById('upiQrCodeImg').src = qrApiUrl;
-
-            // Reveal Payment Section & Scroll Down
-            const paySection = document.getElementById('paymentModalSection');
-            paySection.classList.remove('hidden');
-            paySection.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // Step 2: Finalize Order - Generate Vector PDF and Open WhatsApp
-        function finaliseOrderAndSend() {
-            if (!activeOrderData) return;
-
-            const { orderId, name, mobile, address, items, totalAmount } = activeOrderData;
-
-            // 1. Generate & Download Vector PDF Receipt
-            generateVectorPDF(orderId, name, mobile, address, items, totalAmount);
-
-            // 2. Build WhatsApp Message
-            let orderItemsText = "";
-            items.forEach(item => {
-                orderItemsText += `• ${item.name} x ${item.qty} = ₹${item.price * item.qty}\n`;
-            });
-
-            const waMessage = `*NEW PAID ORDER RECEIPT #${orderId}*\n\n` +
-                `*Customer Details:*\n` +
-                `• *Name:* ${name}\n` +
-                `• *Mobile:* ${mobile}\n` +
-                `• *Order To Be Ready By:* ${address}\n\n` +
-                `*Order Items:*\n${orderItemsText}\n` +
-                `*Total Amount To Be Paid:* ₹${totalAmount}\n`;
-
-            const encodedMsg = encodeURIComponent(waMessage);
-            const waUrl = `https://wa.me/${RESTAURANT_CONFIG.whatsappNumber}?text=${encodedMsg}`;
-
-            // Open WhatsApp in new tab
-            window.open(waUrl, '_blank');
-        }
-
-        // Vector PDF Generator Function
-        function generateVectorPDF(orderId, name, mobile, address, items, totalAmount) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            // Branding Header
-            doc.setFillColor(217, 119, 6); // Brand Amber Color
-            doc.rect(0, 0, 210, 30, 'F');
-
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(20);
-            doc.setFont("helvetica", "bold");
-            doc.text("Yaady's Millet Roti Meals", 14, 18);
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "normal");
-            doc.text("Order Details & Amount To Be Paid", 14, 25);
-
-            // Order Metadata
-            doc.setTextColor(33, 37, 41);
-            doc.setFontSize(11);
-            doc.setFont("helvetica", "bold");
-            doc.text(`Order ID: #${orderId}`, 14, 42);
-            doc.setFont("helvetica", "normal");
-            doc.text(`Date: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, 14, 48);
-
-            // Customer Details Box
-            doc.setFillColor(245, 245, 245);
-            doc.roundedRect(14, 55, 182, 35, 3, 3, 'F');
-
-            doc.setFont("helvetica", "bold");
-            doc.text("Customer Details:", 20, 64);
-            doc.setFont("helvetica", "normal");
-            doc.text(`Name: ${name}`, 20, 71);
-            doc.text(`Mobile: ${mobile}`, 20, 77);
-            doc.text(`Order to be ready before: ${address}`, 20, 83);
-
-            // Table Header
-            let y = 100;
-            doc.setFillColor(230, 230, 230);
-            doc.rect(14, y, 182, 8, 'F');
-            doc.setFont("helvetica", "bold");
-            doc.text("Item Name", 20, y + 6);
-            doc.text("Qty", 120, y + 6);
-            doc.text("Price", 150, y + 6);
-            doc.text("Total", 175, y + 6);
-
-            // Table Items
-            y += 14;
-            doc.setFont("helvetica", "normal");
-            items.forEach(item => {
-                doc.text(item.name, 20, y);
-                doc.text(item.qty.toString(), 122, y);
-                doc.text(`Rs. ${item.price}`, 150, y);
-                doc.text(`Rs. ${item.price * item.qty}`, 175, y);
-                y += 10;
-            });
-
-            // Total Section & Payment Status
-            doc.setLineWidth(0.5);
-            doc.line(14, y, 196, y);
-            y += 10;
-            doc.setFontSize(14);
-            doc.setFont("helvetica", "bold");
-            doc.setTextColor(217, 119, 6);
-            doc.text(`Grand Total: Rs. ${totalAmount}`, 120, y);
-
-            doc.setFontSize(10);
-            doc.setTextColor(5, 150, 105); // Green status
-            doc.text(`Payment To Be Paid`, 14, y);
-
-            // Footer Notice
-            doc.setFontSize(9);
-            doc.setFont("helvetica", "italic");
-            doc.setTextColor(120, 120, 120);
-            doc.text("Thank you for ordering with Yaady's Kitchen! 100% Healthy & Homemade.", 14, y + 25);
-
-            // Download Vector PDF file
-            doc.save(`Order_${orderId}_YaadysKitchen.pdf`);
-        }
-
-        // Smart Link Handler
-        function openSmartLink(platform) {
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-            if (platform === 'zomato') {
-                if (isMobile) {
-                    window.location.href = RESTAURANT_CONFIG.zomatoWebUrl;
-                } else {
-                    window.open(RESTAURANT_CONFIG.zomatoWebUrl, '_blank');
-                }
-            } else if (platform === 'swiggy') {
-                if (isMobile) {
-                    window.location.href = RESTAURANT_CONFIG.swiggyWebUrl;
-                } else {
-                    window.open(RESTAURANT_CONFIG.swiggyWebUrl, '_blank');
-                }
-            }
-        }
-
-        // Initialize Menu on Load
-        document.addEventListener('DOMContentLoaded', renderMenu);
-    </script>
+  document.getElementById("pickup-date").min = new Date().toISOString().split("T")[0];
+  fetchStoreConfig();
+</script>
 </body>
-
 </html>
