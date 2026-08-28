@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Yaady's Millet Roti Meals - Orders</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -19,6 +19,12 @@
         * {
             box-sizing: border-box;
             font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        /* Block pull-to-refresh and rubber-band bounce on mobile */
+        html, body {
+            overscroll-behavior-y: none;
+            overscroll-behavior: none;
         }
 
         body {
@@ -837,7 +843,7 @@
             </p> 
 
             <a id="wa-followup-btn" href="#" target="_blank" class="btn-whatsapp" style="margin-bottom: 16px;">
-                💬 Have a query? Contact us on WhatsApp.
+                💬 Contact us on WhatsApp for an update
             </a>
 
             <!-- Savable Receipt Card -->
@@ -930,6 +936,20 @@
         let pollTimer = null;
         let currentBannerState = "start";
         let hasUploadedPickedSnapshot = false;
+
+        /* Block Mobile Pull-to-Refresh Gesture */
+        let touchStartY = 0;
+        window.addEventListener('touchstart', function(e) {
+            touchStartY = e.touches[0].pageY;
+        }, { passive: true });
+
+        window.addEventListener('touchmove', function(e) {
+            const touchY = e.touches[0].pageY;
+            const touchDiff = touchY - touchStartY;
+            if (window.scrollY === 0 && touchDiff > 0) {
+                if (e.cancelable) e.preventDefault();
+            }
+        }, { passive: false });
 
         function setTopNotice(type) {
             currentBannerState = type;
@@ -1165,8 +1185,7 @@
                 const receiptElement = document.getElementById("receipt-target");
                 const canvas = await html2canvas(receiptElement, {
                     scale: 2,
-                    backgroundColor: "#ffffff",
-                    logging: false
+                    backgroundColor: "#ffffff"
                 });
                 const imageBase64 = canvas.toDataURL("image/png");
 
