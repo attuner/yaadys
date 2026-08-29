@@ -967,15 +967,20 @@
 
             <!-- Vector PDF Download Button -->
             <button type="button" class="btn btn-download" onclick="downloadVectorReceiptPdf()">📄 Download Vector PDF Receipt</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.reload()">Place Another Order</button>
+            <button type="button" class="btn btn-secondary" onclick="window.open(window.location.href, '_blank')">Place Another Order</button>
         </div>
 
         <!-- 5. Rejected Screen -->
         <div id="step-rejected" class="card hidden" style="text-align: center;">
             <div style="font-size: 48px; color: #c92a2a; margin-bottom: 8px;">✕</div>
             <h2>Order Could Not Be Accepted</h2>
-            <p style="color: #495057;">The kitchen is currently overloaded or items are unavailable. Please try again later or order via Swiggy / Zomato.</p>
-            <button type="button" class="btn" onclick="window.location.reload()">Back to Menu</button>
+            <p id="rejected-status-message" style="color: #495057;">The kitchen is currently overloaded or items are unavailable. Please try again later or order via Swiggy / Zomato.</p>
+            
+            <a id="wa-rejected-btn" href="#" target="_blank" class="btn-whatsapp" style="margin-bottom: 12px;">
+                💬 Contact Restaurant on WhatsApp
+            </a>
+            
+            <button type="button" class="btn" onclick="window.open(window.location.href, '_blank')">Place Another Order</button>
         </div>
     </div>
 
@@ -1624,6 +1629,9 @@
                         document.getElementById("step-success").classList.add("hidden");
                         document.getElementById("step-rejected").classList.remove("hidden");
                         setTopNotice("hide");
+
+                        const rejectedMsg = `Hi Yaady's Kitchen, inquiring regarding my cancelled/unaccepted Order ID: *${orderId}*.`;
+                        document.getElementById("wa-rejected-btn").href = `https://wa.me/${RESTAURANT_WHATSAPP}?text=${encodeURIComponent(rejectedMsg)}`;
 
                         if (lastKnownOrderStatus !== "CANCELLED") {
                             lastKnownOrderStatus = "CANCELLED";
