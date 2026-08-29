@@ -42,6 +42,29 @@
             width: 100%;
         }
 
+        /* Persistent Top Brand Header */
+        .global-brand-header {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            margin-bottom: 14px;
+            text-align: center;
+            user-select: none;
+        }
+
+        .global-brand-title {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 800;
+            color: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            letter-spacing: -0.2px;
+        }
+
         .card {
             background: var(--card);
             border-radius: 12px;
@@ -53,6 +76,9 @@
         @media (min-width: 768px) {
             .card {
                 padding: 26px;
+            }
+            .global-brand-title {
+                font-size: 24px;
             }
         }
 
@@ -104,28 +130,21 @@
         }
 
         #top-warning-banner {
-            background: #e7f5ff;
-            color: #1864ab;
-            border: 1px solid #a5d8ff;
+            display: none;
             border-radius: 8px;
             padding: 11px 14px;
             font-size: 13.5px;
             font-weight: 600;
             text-align: center;
             margin-bottom: 14px;
-            cursor: pointer;
             user-select: none;
             transition: all 0.2s ease;
-        }
-
-        #top-warning-banner:hover {
-            background: #d0ebff;
         }
 
         .banner-warning {
             background: #fff3bf !important;
             color: #7f5f00 !important;
-            border-color: #ffe066 !important;
+            border: 1px solid #ffe066 !important;
             cursor: default !important;
         }
 
@@ -175,27 +194,40 @@
         .btn-swiggy { background: #fc8019; }
         .btn-toing { background: #2f3640; }
 
+        /* Wrapped Multi-Row Category Tabs */
         .category-tabs {
             display: flex;
+            flex-wrap: wrap;
             gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 8px;
+            padding-bottom: 4px;
             margin: 16px 0;
-            scrollbar-width: thin;
-            -webkit-overflow-scrolling: touch;
         }
 
         .cat-btn {
-            white-space: nowrap;
-            padding: 9px 18px;
+            flex: 1 1 calc(50% - 8px);
+            min-width: 130px;
+            padding: 10px 12px;
             border: 2px solid var(--border);
             background: #fff;
-            border-radius: 20px;
+            border-radius: 10px;
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
             color: #495057;
             transition: all 0.2s ease;
+            text-align: center;
+            white-space: normal;
+            word-wrap: break-word;
+            line-height: 1.25;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (min-width: 600px) {
+            .cat-btn {
+                flex: 1 1 calc(25% - 8px);
+            }
         }
 
         .cat-plain { border-color: #d97706; color: #b45309; }
@@ -722,9 +754,14 @@
 <body>
 
     <div class="container">
-        <!--<div id="top-warning-banner" onclick="handleBannerClick()">
-            🔄 Click here to refresh the menu before ordering.
-        </div>-->
+        <!-- Universal Brand Header (Visible Across All Pages) -->
+        <header class="global-brand-header">
+            <h1 class="global-brand-title">
+                <span>🌾</span> Yaady's Millet Roti Meals
+            </h1>
+        </header>
+
+        <div id="top-warning-banner"></div>
 
         <!-- 1. Order Input View -->
         <div id="step-order" class="card">
@@ -740,8 +777,7 @@
                 </div>
             </div>
 
-            <h2><span style="font-size: 1.4em;">🌾</span> Yaady's Millet Roti Meals</h2>
-            <p style="margin-top:-4px; font-size:13.5px; color:#6c757d; line-height: 1.5;">
+            <p style="margin-top:0; font-size:13.5px; color:#6c757d; line-height: 1.5;">
                 At Yaady’s, we serve simple, tasty, and wholesome food, bringing the traditional goodness of millet-based roti meals to your plate. Our meals are prepared homestyle with fresh ingredients and authentic flavors. We start food preparation only after receiving your order, and we accept takeaway pickup orders only. Get directions to <a
                     href="https://maps.app.goo.gl/3vTmmsbHN5kg98qF6" target="_blank" rel="noopener noreferrer">Yaady's</a> at Neknampur, Manikonda, Hyderabad.
             </p>
@@ -771,6 +807,7 @@
                 </div>
 
                 <h3 style="margin-top: 22px; margin-bottom: 8px;">Select Dishes</h3>
+                <!-- Multi-Row Wrapped Category Tabs -->
                 <div class="category-tabs" id="cat-nav">
                     <button type="button" class="cat-btn cat-plain active" onclick="filterCategory('Plain Rotis', this)">Plain Rotis</button>
                     <button type="button" class="cat-btn cat-curries" onclick="filterCategory('Rotis & Curries', this)">Rotis & Curries</button>
@@ -849,7 +886,6 @@
                 ↩ Cancel / Edit Order <br> [Please do not cancel once you have made the payment.]
             </button>
 
-            <!-- Push Notification Permission Request Button (If not granted) -->
             <button type="button" id="btn-enable-notify" class="btn btn-notify-perm" onclick="requestNotificationPermission()">
                 🔔 Enable Instant Status Notifications on this Device
             </button>
@@ -898,7 +934,7 @@
                 </div>
                 <h3 style="color: #1971c2; margin: 0 0 6px 0; font-size: 18px;">Order Successfully Picked Up!</h3>
                 <p style="font-size: 13px; color: #495057; margin: 0;">Thank you! We hope you enjoy your wholesome millet meal. Have a wonderful day!</p>
-            </div>
+            </div> 
  
             <h3 id="success-heading" style="margin-bottom: 6px; font-size: 16px;">To view the live order status, please keep this page open and avoid refreshing or closing it.</h3> 
             <p id="success-subtext" style="color: #495057; font-size: 14px; line-height: 1.5; margin-bottom: 16px;">
@@ -1056,22 +1092,12 @@
             const banner = document.getElementById("top-warning-banner");
             if (!banner) return;
 
-            if (type === "start") {
-                banner.style.display = "block";
-                banner.className = "";
-                banner.innerText = "🔄 Click here to refresh the menu before ordering.";
-            } else if (type === "payment") {
+            if (type === "payment") {
                 banner.style.display = "block";
                 banner.className = "banner-warning";
                 banner.innerText = "⚠️ Please do not refresh or close the page.";
-            } else if (type === "hide") {
+            } else {
                 banner.style.display = "none";
-            }
-        }
-
-        function handleBannerClick() {
-            if (currentBannerState === "start") {
-                window.location.reload();
             }
         }
 
@@ -1302,7 +1328,7 @@
             document.getElementById("step-review").classList.add("hidden");
             document.getElementById("step-order").classList.remove("hidden");
 
-            setTopNotice("start");
+            setTopNotice("hide");
             updateLiveSummary();
         }
 
@@ -1339,38 +1365,34 @@
             submitBtn.innerText = "Checking Kitchen Availability...";
 
             try {
-                // 1. Live Fetch Store Configuration & Out of Stock List from Google Sheet
                 const latestConfig = await fetchStoreConfig();
                 const isCurrentlyOpen = latestConfig.storeOpen !== false;
                 const currentOutOfStock = Array.isArray(latestConfig.outOfStock) ? latestConfig.outOfStock : [];
 
-                // 2. Check if restaurant is closed
                 if (!isCurrentlyOpen) {
                     alert("⚠️ Sorry, Yaady's Kitchen is currently CLOSED or not accepting orders. Please check back later.");
                     submitBtn.disabled = false;
                     submitBtn.innerText = "Confirm & Place Order";
                     document.getElementById("step-review").classList.add("hidden");
                     document.getElementById("step-order").classList.remove("hidden");
-                    setTopNotice("start");
+                    setTopNotice("hide");
                     return;
                 }
 
-                // 3. Check if any selected items are now Out of Stock
                 const unavailableItemNames = [];
                 let hasRemovedItems = false;
 
                 MENU.forEach(dish => {
                     if ((cart[dish.id] || 0) > 0 && currentOutOfStock.includes(dish.id)) {
                         unavailableItemNames.push(dish.name);
-                        cart[dish.id] = 0; // Automatically remove from cart
+                        cart[dish.id] = 0;
                         hasRemovedItems = true;
                     }
                 });
 
-                // 4. If items were removed, inform customer and update review screen
                 if (hasRemovedItems) {
                     const newTotal = updateLiveSummary();
-                    renderMenu(); // Re-render menu to show out of stock tag
+                    renderMenu();
 
                     if (newTotal <= 0) {
                         alert(`⚠️ Non-Availability Notice:\nThe following item(s) are currently OUT OF STOCK and were removed:\n• ${unavailableItemNames.join("\n• ")}\n\nYour cart is now empty. Please choose available dishes.`);
@@ -1378,14 +1400,11 @@
                         submitBtn.innerText = "Confirm & Place Order";
                         document.getElementById("step-review").classList.add("hidden");
                         document.getElementById("step-order").classList.remove("hidden");
-                        setTopNotice("start");
+                        setTopNotice("hide");
                         return;
                     } else {
                         alert(`⚠️ Non-Availability Notice:\nThe following item(s) just went OUT OF STOCK and were removed from your order:\n• ${unavailableItemNames.join("\n• ")}\n\nYour order summary and total have been updated. Please review before proceeding.`);
                         
-                        // Re-render the review screen with remaining available items
-                        const date = document.getElementById("pickup-date").value;
-                        const time = document.getElementById("pickup-time").value;
                         const itemsNode = document.getElementById("rcpt-items");
                         itemsNode.innerHTML = "";
                         
@@ -1403,11 +1422,10 @@
                         document.getElementById("rcpt-total").innerText = newTotal;
                         submitBtn.disabled = false;
                         submitBtn.innerText = "Confirm & Place Order";
-                        return; // Let user see updated review
+                        return;
                     }
                 }
 
-                // Proceed with Order Submission if everything is available
                 submitBtn.innerText = "Confirming Order...";
 
                 const name = document.getElementById("cust-name").value.trim();
@@ -1424,7 +1442,6 @@
                     Notification.requestPermission();
                 }
 
-                // Instant UI Navigation to Payment Screen
                 document.getElementById("step-review").classList.add("hidden");
                 document.getElementById("live-order-bar").classList.add("hidden");
                 document.getElementById("step-payment").classList.remove("hidden");
@@ -1619,7 +1636,7 @@
             }, 4000);
         }
 
-        // True Vector PDF Generation
+        // Vector PDF Generation (iOS Safari Native Tab Preview & Standard Download)
         function downloadVectorReceiptPdf() {
             try {
                 if (!window.jspdf || !window.jspdf.jsPDF) {
@@ -1724,7 +1741,16 @@
                 doc.text("UPI ID: 9000001690@upi", 40, y + 4, { align: "center" });
                 doc.text("Thank you for dining with Yaady's!", 40, y + 8, { align: "center" });
 
-                doc.save(`Receipt_${data.orderId}.pdf`);
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+                if (isIOS) {
+                    const pdfBlob = doc.output('blob');
+                    const blobUrl = URL.createObjectURL(pdfBlob);
+                    window.open(blobUrl, '_blank');
+                } else {
+                    doc.save(`Receipt_${data.orderId}.pdf`);
+                }
             } catch (err) {
                 console.error("Vector PDF error:", err);
                 alert("Could not generate PDF. Please take a screenshot of the receipt.");
@@ -1758,8 +1784,6 @@
             document.body.removeChild(textArea);
         }
 
-        // Initialize on startup
-        setTopNotice("start");
         adjustPickupTimeDefaults();
         fetchStoreConfig();
         startLiveConfigSync();
