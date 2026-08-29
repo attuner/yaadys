@@ -1264,10 +1264,30 @@
             window.scrollTo(0, 0);
         }
 
+        async function captureElementSafely(element) {
+            if (!window.html2canvas || !element) return "";
+            try {
+                const canvasPromise = html2canvas(element, {
+                    scale: 1.5,
+                    backgroundColor: "#ffffff",
+                    logging: false,
+                    useCORS: true
+                });
+                
+                const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 1500));
+                const canvas = await Promise.race([canvasPromise, timeoutPromise]);
+                
+                return canvas ? canvas.toDataURL("image/png") : "";
+            } catch (err) {
+                console.warn("Canvas capture bypassed:", err);
+                return "";
+            }
+        }
+
         async function sendOrder() {
             const submitBtn = document.getElementById("submit-btn");
             submitBtn.disabled = true;
-            submitBtn.innerText = "Capturing Receipt & Processing...";
+            submitBtn.innerText = "Confirming Order...";
 
             try {
                 const name = document.getElementById("cust-name").value.trim();
@@ -1279,21 +1299,8 @@
 
                 activeOrderId = "YMR-" + Math.floor(1000 + Math.random() * 9000);
 
-                let imageBase64 = "";
                 const receiptElement = document.getElementById("receipt-target");
-                if (window.html2canvas && receiptElement) {
-                    try {
-                        const canvas = await html2canvas(receiptElement, {
-                            scale: 2,
-                            backgroundColor: "#ffffff",
-                            logging: false,
-                            useCORS: true
-                        });
-                        imageBase64 = canvas.toDataURL("image/png");
-                    } catch (canvasErr) {
-                        console.warn("Canvas capture skipped for compatibility:", canvasErr);
-                    }
-                }
+                const imageBase64 = await captureElementSafely(receiptElement);
 
                 document.getElementById("step-review").classList.add("hidden");
                 document.getElementById("live-order-bar").classList.add("hidden");
@@ -1364,7 +1371,7 @@
                 startStatusPolling(activeOrderId);
 
             } catch (err) {
-                alert("Submission Error: " + err.message);
+                console.error("Order processing error:", err);
                 submitBtn.disabled = false;
                 submitBtn.innerText = "Confirm & Place Order";
                 document.getElementById("step-payment").classList.add("hidden");
@@ -1465,13 +1472,7 @@
                 const receiptElem = document.getElementById("savable-receipt");
                 if (!window.html2canvas || !receiptElem) return;
                 
-                const canvas = await html2canvas(receiptElem, {
-                    scale: 2,
-                    backgroundColor: "#ffffff",
-                    logging: false,
-                    useCORS: true
-                });
-                const updatedImageBase64 = canvas.toDataURL("image/png");
+                const updatedImageBase64 = await captureElementSafely(receiptElem);
                 const customerName = document.getElementById("cust-name").value.trim();
 
                 await fetch(SCRIPT_URL, {
