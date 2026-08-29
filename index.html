@@ -18,66 +18,90 @@
 
         * {
             box-sizing: border-box;
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* Block pull-to-refresh and rubber-band bounce on mobile */
         html, body {
             overscroll-behavior-y: none;
-            overscroll-behavior: none;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
             background: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 16px;
-            padding-bottom: 90px;
+            padding: 12px;
+            padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
         }
 
         .container {
-            max-width: 600px;
+            max-width: 840px;
             margin: 0 auto;
+            width: 100%;
         }
 
         .card {
             background: var(--card);
             border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 18px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
             margin-bottom: 16px;
         }
 
-        h2,
-        h3 {
+        @media (min-width: 768px) {
+            .card {
+                padding: 26px;
+            }
+        }
+
+        h2, h3 {
             margin-top: 0;
             color: #111;
         }
 
         .form-group {
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         label {
             display: block;
             font-weight: 600;
             font-size: 13px;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
             color: #495057;
         }
 
+        /* 16px minimum font-size prevents iOS Safari from auto-zooming on focus */
         input {
             width: 100%;
-            padding: 10px;
+            padding: 11px;
             border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #fff;
+            color: var(--text);
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(201, 42, 42, 0.15);
         }
 
         .grid-2 {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        @media (min-width: 540px) {
+            .grid-2 {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         /* Dynamic Top Notice Banner */
@@ -86,8 +110,8 @@
             color: #1864ab;
             border: 1px solid #a5d8ff;
             border-radius: 8px;
-            padding: 10px 14px;
-            font-size: 13px;
+            padding: 11px 14px;
+            font-size: 13.5px;
             font-weight: 600;
             text-align: center;
             margin-bottom: 14px;
@@ -107,51 +131,54 @@
             cursor: default !important;
         }
 
-        /* Compact Delivery Strip for Start Page */
+        /* Compact Delivery Strip */
         .compact-delivery {
             display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
             align-items: center;
             justify-content: space-between;
             background: #fff;
             border: 1px dashed var(--border);
             border-radius: 8px;
-            padding: 8px 12px;
+            padding: 10px 14px;
             margin-bottom: 16px;
         }
 
         .compact-delivery-title {
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 700;
             color: #495057;
         }
 
         .delivery-icons {
             display: flex;
-            gap: 6px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .app-icon-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 5px 10px;
+            border-radius: 5px;
             text-decoration: none;
-            font-size: 11px;
+            font-size: 11.5px;
             font-weight: 700;
             color: #fff;
             transition: opacity 0.2s;
         }
 
         .app-icon-btn:hover {
-            opacity: 0.85;
+            opacity: 0.88;
         }
 
         .btn-zomato { background: #cb202d; }
         .btn-swiggy { background: #fc8019; }
         .btn-toing { background: #2f3640; }
 
-        /* Category Navigation with Distinct Themes */
+        /* Category Navigation with Scrollbar & Wrappers */
         .category-tabs {
             display: flex;
             gap: 8px;
@@ -159,11 +186,12 @@
             padding-bottom: 8px;
             margin: 16px 0;
             scrollbar-width: thin;
+            -webkit-overflow-scrolling: touch;
         }
 
         .cat-btn {
             white-space: nowrap;
-            padding: 8px 16px;
+            padding: 9px 18px;
             border: 2px solid var(--border);
             background: #fff;
             border-radius: 20px;
@@ -186,25 +214,45 @@
         .cat-meals { border-color: #2563eb; color: #2563eb; }
         .cat-meals.active { background: #2563eb; color: #fff; }
 
-        /* Food Cards */
+        /* Responsive Food Menu Grid */
+        #menu-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        @media (min-width: 640px) {
+            #menu-list {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+        }
+
         .menu-item {
             display: flex;
             flex-direction: column;
             border: 1px solid var(--border);
             border-radius: 10px;
-            margin-bottom: 16px;
             overflow: hidden;
             background: #fff;
+            height: 100%;
         }
 
         .menu-item img {
             width: 100%;
-            height: 180px;
+            height: 175px;
             object-fit: cover;
             background: #f1f3f5;
         }
 
-        .item-body { padding: 12px 14px; }
+        .item-body {
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
         .item-top {
             display: flex;
             justify-content: space-between;
@@ -216,7 +264,7 @@
             font-weight: 700;
             font-size: 15px;
             color: #111;
-            line-height: 1.3;
+            line-height: 1.35;
             padding-right: 8px;
         }
 
@@ -228,7 +276,7 @@
         }
 
         .item-desc {
-            font-size: 13px;
+            font-size: 12.5px;
             color: #6c757d;
             margin-bottom: 12px;
             line-height: 1.4;
@@ -238,7 +286,8 @@
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            min-height: 32px;
+            min-height: 36px;
+            margin-top: auto;
         }
 
         .qty-controls {
@@ -248,18 +297,21 @@
         }
 
         .qty-btn {
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             border-radius: 6px;
             border: 1px solid var(--border);
             background: #f8f9fa;
             cursor: pointer;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 17px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .qty-display {
-            width: 20px;
+            width: 24px;
             text-align: center;
             font-weight: bold;
             font-size: 15px;
@@ -270,10 +322,10 @@
             border: 4px solid #f3f3f3;
             border-top: 4px solid var(--primary);
             border-radius: 50%;
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             animation: spin 1s linear infinite;
-            margin: 12px auto;
+            margin: 14px auto;
         }
 
         @keyframes spin {
@@ -286,9 +338,9 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 14px;
+            padding: 7px 16px;
             border-radius: 20px;
-            font-size: 13px;
+            font-size: 13.5px;
             font-weight: 700;
             margin-bottom: 12px;
         }
@@ -385,7 +437,7 @@
             margin-top: 8px;
         }
 
-        /* Ready Pickup Food Cover Container */
+        /* Ready & Picked Up Banners */
         .ready-food-box {
             background: #ebfbee;
             border: 2px solid #51cf66;
@@ -393,10 +445,9 @@
             padding: 20px;
             margin: 14px 0;
             text-align: center;
-            animation: bounceIn 0.8s ease;
+            animation: bounceIn 0.7s ease;
         }
 
-        /* Picked Up Success Banner */
         .pickedup-box {
             background: #e7f5ff;
             border: 2px solid #339af0;
@@ -404,39 +455,41 @@
             padding: 20px;
             margin: 14px 0;
             text-align: center;
-            animation: bounceIn 0.8s ease;
+            animation: bounceIn 0.7s ease;
         }
 
         @keyframes bounceIn {
-            0% { transform: scale(0.85); opacity: 0; }
-            60% { transform: scale(1.04); opacity: 1; }
+            0% { transform: scale(0.9); opacity: 0; }
+            60% { transform: scale(1.02); opacity: 1; }
             100% { transform: scale(1); }
         }
 
         .packed-bag-icon {
-            width: 84px;
-            height: 84px;
+            width: 80px;
+            height: 80px;
             margin: 0 auto 10px auto;
             display: flex;
             align-items: center;
             justify-content: center;
             background: #fff;
             border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(43, 138, 62, 0.15);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
         }
 
         /* Buttons */
         .btn {
             display: block;
             width: 100%;
-            padding: 12px;
+            padding: 13px;
             background: var(--primary);
             color: #fff;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 15px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
+            text-align: center;
+            transition: background 0.2s;
         }
 
         .btn:hover { background: var(--primary-hover); }
@@ -450,8 +503,8 @@
             justify-content: center;
             gap: 8px;
             text-decoration: none;
-            border-radius: 6px;
-            padding: 12px;
+            border-radius: 8px;
+            padding: 13px;
             font-weight: 700;
             font-size: 15px;
             margin-top: 10px;
@@ -467,9 +520,9 @@
             gap: 8px;
             margin-top: 10px;
             text-decoration: none;
-            border-radius: 6px;
-            padding: 12px;
-            font-weight: 600;
+            border-radius: 8px;
+            padding: 13px;
+            font-weight: 700;
             font-size: 14px;
         }
         .btn-whatsapp:hover { background: #1eb956; }
@@ -482,6 +535,7 @@
             cursor: not-allowed;
         }
 
+        /* Sticky Bottom Bar Centered */
         #live-order-bar {
             position: fixed;
             bottom: 0;
@@ -490,14 +544,25 @@
             background: #212529;
             color: #fff;
             padding: 12px 20px;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
+        }
+
+        .live-bar-container {
+            max-width: 840px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .live-total {
-            font-size: 17px;
+            font-size: 18px;
             font-weight: bold;
             color: #ffd43b;
         }
@@ -506,10 +571,11 @@
             background: var(--primary);
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
             cursor: pointer;
+            font-size: 14px;
         }
 
         #live-drawer {
@@ -558,7 +624,7 @@
         .payment-box {
             background: #f8f9fa;
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 16px;
             margin: 14px 0;
             text-align: center;
@@ -599,23 +665,23 @@
             display: inline-flex;
             align-items: center;
             background: #e9ecef;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
             font-weight: bold;
             font-size: 14px;
             color: #333;
-            gap: 6px;
+            gap: 8px;
             margin-top: 6px;
         }
 
         .copy-btn {
             background: #dee2e6;
             border: none;
-            padding: 3px 8px;
+            padding: 4px 10px;
             border-radius: 4px;
-            font-size: 11px;
+            font-size: 11.5px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .hidden { display: none !important; }
@@ -678,8 +744,8 @@
                 </div>
             </div>
 
-            <h2><span class="text-2xl">🌾</span> Yaady's Millet Roti Meals</h2>
-            <p style="margin-top:-6px; font-size:13px; color:#6c757d; text-align: justify;">
+            <h2><span style="font-size: 1.4em;">🌾</span> Yaady's Millet Roti Meals</h2>
+            <p style="margin-top:-4px; font-size:13.5px; color:#6c757d; line-height: 1.5;">
                 At Yaady’s, we serve simple, tasty, and wholesome food, bringing the traditional goodness of millet-based roti meals to your plate. Our meals are prepared in a homestyle with fresh ingredients and authentic flavors. We start food preparation only after receiving your order and we accept Pickup Orders Only. Get directions to <a
                     href="https://maps.app.goo.gl/3vTmmsbHN5kg98qF6" target="_blank" rel="noopener noreferrer">Yaady's</a> at Neknampur, Manikonda, Hyderabad.
             </p>
@@ -689,12 +755,12 @@
             <div id="order-inputs">
                 <div class="form-group">
                     <label>Full Name *</label>
-                    <input type="text" id="cust-name" required />
+                    <input type="text" id="cust-name" placeholder="e.g. Rahul Sharma" required />
                 </div>
 
                 <div class="form-group">
                     <label>Mobile Number *</label>
-                    <input type="tel" id="cust-phone" maxlength="10" required />
+                    <input type="tel" id="cust-phone" maxlength="10" placeholder="10-digit mobile number" required />
                 </div>
 
                 <div class="grid-2">
@@ -708,13 +774,13 @@
                     </div>
                 </div>
 
-                <h3 style="margin-top: 20px; margin-bottom: 6px;">Select Dishes</h3>
+                <h3 style="margin-top: 22px; margin-bottom: 8px;">Select Dishes</h3>
                 <!-- Color-Coded Categories -->
                 <div class="category-tabs" id="cat-nav">
-                    <button class="cat-btn cat-plain active" onclick="filterCategory('Plain Rotis', this)">Plain Rotis</button>
-                    <button class="cat-btn cat-curries" onclick="filterCategory('Rotis & Curries', this)">Rotis & Curries</button>
-                    <button class="cat-btn cat-specials" onclick="filterCategory('Specials', this)">Specials</button>
-                    <button class="cat-btn cat-meals" onclick="filterCategory('Meals', this)">Meals</button>
+                    <button type="button" class="cat-btn cat-plain active" onclick="filterCategory('Plain Rotis', this)">Plain Rotis</button>
+                    <button type="button" class="cat-btn cat-curries" onclick="filterCategory('Rotis & Curries', this)">Rotis & Curries</button>
+                    <button type="button" class="cat-btn cat-specials" onclick="filterCategory('Specials', this)">Specials</button>
+                    <button type="button" class="cat-btn cat-meals" onclick="filterCategory('Meals', this)">Meals</button>
                 </div>
 
                 <div id="menu-list"></div>
@@ -747,8 +813,8 @@
                 </div>
             </div>
 
-            <button id="submit-btn" class="btn" onclick="sendOrder()">Confirm & Place Order</button>
-            <button class="btn btn-secondary" onclick="showOrderForm()">Back to Edit</button>
+            <button type="button" id="submit-btn" class="btn" onclick="sendOrder()">Confirm & Place Order</button>
+            <button type="button" class="btn btn-secondary" onclick="showOrderForm()">Back to Edit</button>
         </div>
 
         <!-- 3. Direct Payment Screen -->
@@ -758,7 +824,7 @@
 
             <div class="payment-box">
                 <div style="font-size: 13px; color: #6c757d; margin-bottom: 4px;">Order ID: <strong id="pay-order-id" style="color: var(--primary);"></strong></div>
-                <h3 style="margin: 0; font-size: 18px;">Pay Amount: <span id="pay-amount-display" style="color: var(--primary);"></span></h3>
+                <h3 style="margin: 0; font-size: 20px;">Pay Amount: <span id="pay-amount-display" style="color: var(--primary);"></span></h3>
 
                 <!-- Clickable QR Code -->
                 <a id="upi-qr-link" href="#" class="qr-link-wrapper" title="Click to Pay directly with UPI app">
@@ -776,7 +842,7 @@
                 <div style="margin-top: 10px;">
                     <span class="upi-badge">
                         <span>9000001690@upi</span>
-                        <button class="copy-btn" onclick="copyUpiId()">Copy</button>
+                        <button type="button" class="copy-btn" onclick="copyUpiId()">Copy</button>
                     </span>
                 </div>
                 <p style="font-size: 11px; color: #6c757d; margin-top: 8px; margin-bottom: 0;">Order ID auto-filled in remarks: <strong id="remarks-id-preview"></strong></p>
@@ -802,7 +868,7 @@
                 <span id="order-status-text">Food is Preparing</span>
             </div>
 
-            <!-- Animated Kitchen Preparation Progress Loading Bar (Visible while PREPARING) -->
+            <!-- Animated Kitchen Preparation Progress Loading Bar -->
             <div id="prep-progress-container" class="prep-progress-card">
                 <div class="progress-header">
                     <span>🍳 Kitchen Preparation in Progress</span>
@@ -817,7 +883,7 @@
                 </div>
             </div>
  
-            <!-- Food Packed & Ready Banner (Visible when READY) -->
+            <!-- Food Packed & Ready Banner -->
             <div id="ready-food-box" class="ready-food-box hidden">
                 <div class="packed-bag-icon">
                     <span style="font-size: 44px;">🛍️</span>
@@ -826,7 +892,7 @@
                 <p style="font-size: 13px; color: #495057; margin: 0;">Please show your <strong>Order ID</strong> at the counter to collect your meal. Get directions to <a href='https://maps.app.goo.gl/3vTmmsbHN5kg98qF6' target='_blank' rel='noopener noreferrer'>Yaady's.</a></p>
             </div>
 
-            <!-- Food Picked Up Confirmation Banner (Visible when PICKED UP) -->
+            <!-- Food Picked Up Confirmation Banner -->
             <div id="picked-up-box" class="pickedup-box hidden">
                 <div class="packed-bag-icon" style="box-shadow: 0 4px 10px rgba(51, 154, 240, 0.2);">
                     <span style="font-size: 44px;">🌾</span>
@@ -836,14 +902,14 @@
             </div>
  
             <!-- Order Status Message -->
-            <h3 id="success-heading" style="margin-bottom: 6px;">To view the food ready status, please keep this page open and avoid refreshing or closing it.</h3> 
+            <h3 id="success-heading" style="margin-bottom: 6px; font-size: 16px;">To view the food ready status, please keep this page open and avoid refreshing or closing it.</h3> 
             <p id="success-subtext" style="color: #495057; font-size: 14px; line-height: 1.5; margin-bottom: 16px;">
                 Make your way to <a
                     href="https://maps.app.goo.gl/3vTmmsbHN5kg98qF6" target="_blank" rel="noopener noreferrer">Yaady's</a>.
             </p> 
 
             <a id="wa-followup-btn" href="#" target="_blank" class="btn-whatsapp" style="margin-bottom: 16px;">
-                💬 Contact us on WhatsApp for an update
+                💬 Have a query? Contact us on WhatsApp.
             </a>
 
             <!-- Savable Receipt Card -->
@@ -866,8 +932,8 @@
                 </div>
             </div>
 
-            <button class="btn btn-download" onclick="downloadReceipt()">📥 Download Receipt</button>
-            <button class="btn btn-secondary" onclick="window.location.reload()">Place Another Order</button>
+            <button type="button" class="btn btn-download" onclick="downloadReceipt()">📥 Download Receipt</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.reload()">Place Another Order</button>
         </div>
 
         <!-- 5. Rejected Screen -->
@@ -875,16 +941,18 @@
             <div style="font-size: 48px; color: #c92a2a; margin-bottom: 8px;">✕</div>
             <h2>Order Could Not Be Accepted</h2>
             <p style="color: #495057;">The kitchen is currently overloaded or items are unavailable. Please try again later or order via Swiggy / Zomato.</p>
-            <button class="btn" onclick="window.location.reload()">Back to Menu</button>
+            <button type="button" class="btn" onclick="window.location.reload()">Back to Menu</button>
         </div>
     </div>
 
     <!-- Sticky Bottom Bar -->
     <div id="live-order-bar" class="hidden">
-        <div>
-            <span id="bar-items-count">0 items</span> | <span class="live-total">₹<span id="bar-total">0</span></span>
+        <div class="live-bar-container">
+            <div>
+                <span id="bar-items-count">0 items</span> | <span class="live-total">₹<span id="bar-total">0</span></span>
+            </div>
+            <button type="button" class="live-btn" onclick="renderReview()">Review Order →</button>
         </div>
-        <button class="live-btn" onclick="renderReview()">Review Order →</button>
     </div>
 
     <script>
@@ -937,7 +1005,7 @@
         let currentBannerState = "start";
         let hasUploadedPickedSnapshot = false;
 
-        /* Block Mobile Pull-to-Refresh Gesture */
+        /* Block Mobile Pull-to-Refresh Gesture Safely */
         let touchStartY = 0;
         window.addEventListener('touchstart', function(e) {
             touchStartY = e.touches[0].pageY;
@@ -947,7 +1015,10 @@
             const touchY = e.touches[0].pageY;
             const touchDiff = touchY - touchStartY;
             if (window.scrollY === 0 && touchDiff > 0) {
-                if (e.cancelable) e.preventDefault();
+                // Ensure we only prevent default if it's safe to do so
+                if (e.cancelable) {
+                    e.preventDefault();
+                }
             }
         }, { passive: false });
 
@@ -986,7 +1057,11 @@
 
         function adjustPickupTimeDefaults() {
             const now = new Date();
-            const todayStr = now.toISOString().split("T")[0];
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, "0");
+            const day = String(now.getDate()).padStart(2, "0");
+            const todayStr = `${year}-${month}-${day}`;
+            
             const dateInput = document.getElementById("pickup-date");
             const timeInput = document.getElementById("pickup-time");
 
@@ -1016,7 +1091,7 @@
         async function fetchStoreConfig() {
             try {
                 const cacheBuster = `${SCRIPT_URL}?t=${new Date().getTime()}`;
-                const response = await fetch(cacheBuster);
+                const response = await fetch(cacheBuster, { mode: "cors" });
                 const data = await response.json();
 
                 isStoreOpen = data.storeOpen !== false;
@@ -1051,18 +1126,20 @@
                 item.innerHTML = `
                     <img src="${dish.img}" alt="${dish.name}" loading="lazy" />
                     <div class="item-body">
-                      <div class="item-top">
-                        <span class="item-name">${dish.name}</span>
-                        <span class="item-price">₹${dish.price}</span>
+                      <div>
+                        <div class="item-top">
+                          <span class="item-name">${dish.name}</span>
+                          <span class="item-price">₹${dish.price}</span>
+                        </div>
+                        <div class="item-desc">${dish.desc}</div>
                       </div>
-                      <div class="item-desc">${dish.desc}</div>
                       <div class="item-actions">
                         ${isSoldOut
                             ? `<span class="out-of-stock-tag">Out of Stock</span>`
                             : `<div class="qty-controls">
-                                  <button class="qty-btn" type="button" onclick="modifyQty(${dish.id}, -1)">-</button>
+                                  <button type="button" class="qty-btn" onclick="modifyQty(${dish.id}, -1)">-</button>
                                   <span class="qty-display" id="qty-${dish.id}">${cart[dish.id]}</span>
-                                  <button class="qty-btn" type="button" onclick="modifyQty(${dish.id}, 1)">+</button>
+                                  <button type="button" class="qty-btn" onclick="modifyQty(${dish.id}, 1)">+</button>
                                </div>`
                         }
                       </div>
@@ -1097,7 +1174,7 @@
                 if (q > 0) {
                     count += q;
                     total += q * dish.price;
-                    summaryHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+                    summaryHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:4px;">
                       <span>${q}x ${dish.name}</span>
                       <span>₹${q * dish.price}</span>
                     </div>`;
@@ -1144,7 +1221,7 @@
             document.getElementById("rcpt-name").innerText = name;
             document.getElementById("rcpt-phone").innerText = phone;
             document.getElementById("rcpt-datetime").innerText = `${date} at ${formatTimeTo12Hour(time)}`;
-
+            
             const itemsNode = document.getElementById("rcpt-items");
             itemsNode.innerHTML = "";
             MENU.forEach(dish => {
@@ -1182,19 +1259,35 @@
             submitBtn.innerText = "Processing Order...";
 
             try {
-                const receiptElement = document.getElementById("receipt-target");
-                const canvas = await html2canvas(receiptElement, {
-                    scale: 2,
-                    backgroundColor: "#ffffff"
-                });
-                const imageBase64 = canvas.toDataURL("image/png");
-
                 const name = document.getElementById("cust-name").value.trim();
                 const phone = document.getElementById("cust-phone").value.trim();
                 const pickupDate = document.getElementById("pickup-date").value;
                 const pickupTimeFormatted = formatTimeTo12Hour(document.getElementById("pickup-time").value);
                 activeTotal = updateLiveSummary();
                 const totalAmount = `₹${activeTotal}`;
+
+                // Process layout transitions immediately so Safari doesn't freeze waiting for Canvas
+                document.getElementById("step-review").classList.add("hidden");
+                document.getElementById("step-payment").classList.remove("hidden");
+                setTopNotice("payment");
+                window.scrollTo(0, 0);
+
+                // Run snapshot generation safely in background
+                let imageBase64 = "";
+                try {
+                    const receiptElement = document.getElementById("receipt-target");
+                    if (window.html2canvas && receiptElement) {
+                        const canvas = await html2canvas(receiptElement, {
+                            scale: 2,
+                            backgroundColor: "#ffffff",
+                            logging: false,
+                            useCORS: true
+                        });
+                        imageBase64 = canvas.toDataURL("image/png");
+                    }
+                } catch (canvasErr) {
+                    console.warn("Canvas capture skipped for compatibility:", canvasErr);
+                }
 
                 activeOrderId = "YMR-" + Math.floor(1000 + Math.random() * 9000);
 
@@ -1214,69 +1307,62 @@
                     receiptImage: imageBase64
                 };
 
-                const response = await fetch(SCRIPT_URL, {
+                // Populate Payment Screen
+                document.getElementById("pay-order-id").innerText = activeOrderId;
+                document.getElementById("pay-amount-display").innerText = totalAmount;
+                document.getElementById("btn-pay-amount").innerText = activeTotal;
+                document.getElementById("remarks-id-preview").innerText = `Order ${activeOrderId}`;
+
+                // Populate Final Confirmation Screen
+                document.getElementById("conf-id").innerText = activeOrderId;
+                document.getElementById("conf-name").innerText = name;
+                document.getElementById("conf-phone").innerText = phone;
+                document.getElementById("conf-slot").innerText = `${pickupDate} at ${pickupTimeFormatted}`;
+                document.getElementById("conf-total").innerText = totalAmount;
+
+                const confItemsNode = document.getElementById("conf-items");
+                confItemsNode.innerHTML = "";
+                MENU.forEach(dish => {
+                    if (cart[dish.id] > 0) {
+                        confItemsNode.innerHTML += `
+                          <div class="receipt-line">
+                            <span>${cart[dish.id]}x ${dish.name}</span>
+                            <span>₹${cart[dish.id] * dish.price}</span>
+                          </div>
+                        `;
+                    }
+                });
+
+                // Generate UPI Link & QR Code
+                const upiPaymentUri = `upi://pay?pa=${RESTAURANT_UPI_ID}&pn=Yaadys%20Millet%20Roti%20Meals&am=${activeTotal}&cu=INR&tn=Order%20${activeOrderId}`;
+                document.getElementById("direct-upi-btn").href = upiPaymentUri;
+                document.getElementById("upi-qr-link").href = upiPaymentUri;
+
+                const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=${encodeURIComponent(upiPaymentUri)}`;
+                document.getElementById("upi-qr-image").src = qrCodeUrl;
+
+                // WhatsApp links
+                const payWaMsg = `Hi Yaady's Kitchen, sharing payment proof for Order *${activeOrderId}* (Amount: ₹${activeTotal}).`;
+                document.getElementById("wa-contact-btn").href = `https://wa.me/${RESTAURANT_WHATSAPP}?text=${encodeURIComponent(payWaMsg)}`;
+
+                const followupWaMsg = `Hi Yaady's Kitchen, following up on my confirmed Order ID: *${activeOrderId}*.`;
+                document.getElementById("wa-followup-btn").href = `https://wa.me/${RESTAURANT_WHATSAPP}?text=${encodeURIComponent(followupWaMsg)}`;
+
+                // Dispatch order to Google Sheet backend
+                fetch(SCRIPT_URL, {
                     method: "POST",
                     headers: { "Content-Type": "text/plain;charset=utf-8" },
                     body: JSON.stringify(payload)
-                });
+                }).catch(postErr => console.warn("Backend sync notice:", postErr));
 
-                const resData = await response.json();
-                if (resData.status === "success") {
-                    document.getElementById("step-review").classList.add("hidden");
-                    document.getElementById("step-payment").classList.remove("hidden");
+                startStatusPolling(activeOrderId);
 
-                    setTopNotice("payment");
-
-                    // Populate Payment Card
-                    document.getElementById("pay-order-id").innerText = activeOrderId;
-                    document.getElementById("pay-amount-display").innerText = totalAmount;
-                    document.getElementById("btn-pay-amount").innerText = activeTotal;
-                    document.getElementById("remarks-id-preview").innerText = `Order ${activeOrderId}`;
-
-                    // Populate Final Confirmation Card
-                    document.getElementById("conf-id").innerText = activeOrderId;
-                    document.getElementById("conf-name").innerText = name;
-                    document.getElementById("conf-phone").innerText = phone;
-                    document.getElementById("conf-slot").innerText = `${pickupDate} at ${pickupTimeFormatted}`;
-                    document.getElementById("conf-total").innerText = totalAmount;
-
-                    const confItemsNode = document.getElementById("conf-items");
-                    confItemsNode.innerHTML = "";
-                    MENU.forEach(dish => {
-                        if (cart[dish.id] > 0) {
-                            confItemsNode.innerHTML += `
-                              <div class="receipt-line">
-                                <span>${cart[dish.id]}x ${dish.name}</span>
-                                <span>₹${cart[dish.id] * dish.price}</span>
-                              </div>
-                            `;
-                        }
-                    });
-
-                    // UPI URI with auto-filled Order ID & Amount
-                    const upiPaymentUri = `upi://pay?pa=${RESTAURANT_UPI_ID}&pn=Yaadys%20Millet%20Roti%20Meals&am=${activeTotal}&cu=INR&tn=Order%20${activeOrderId}`;
-
-                    document.getElementById("direct-upi-btn").href = upiPaymentUri;
-                    document.getElementById("upi-qr-link").href = upiPaymentUri;
-
-                    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=${encodeURIComponent(upiPaymentUri)}`;
-                    document.getElementById("upi-qr-image").src = qrCodeUrl;
-
-                    // WhatsApp links
-                    const payWaMsg = `Hi Yaady's Kitchen, sharing payment proof for Order *${activeOrderId}* (Amount: ₹${activeTotal}).`;
-                    document.getElementById("wa-contact-btn").href = `https://wa.me/${RESTAURANT_WHATSAPP}?text=${encodeURIComponent(payWaMsg)}`;
-
-                    const followupWaMsg = `Hi Yaady's Kitchen, following up on my confirmed Order ID: *${activeOrderId}*.`;
-                    document.getElementById("wa-followup-btn").href = `https://wa.me/${RESTAURANT_WHATSAPP}?text=${encodeURIComponent(followupWaMsg)}`;
-
-                    startStatusPolling(activeOrderId);
-                } else {
-                    throw new Error(resData.message || "Failed to submit order.");
-                }
             } catch (err) {
                 alert("Submission Error: " + err.message);
                 submitBtn.disabled = false;
                 submitBtn.innerText = "Confirm & Place Order";
+                document.getElementById("step-payment").classList.add("hidden");
+                document.getElementById("step-review").classList.remove("hidden");
             }
         }
 
@@ -1286,7 +1372,7 @@
 
             pollTimer = setInterval(async () => {
                 try {
-                    const res = await fetch(`${SCRIPT_URL}?checkOrderId=${orderId}&t=${new Date().getTime()}`);
+                    const res = await fetch(`${SCRIPT_URL}?checkOrderId=${orderId}&t=${new Date().getTime()}`, { mode: "cors" });
                     const data = await res.json();
                     const currentStatus = (data.status || "").trim().toUpperCase();
 
@@ -1295,12 +1381,10 @@
                         document.getElementById("step-success").classList.remove("hidden");
                         setTopNotice("hide");
 
-                        // Show Progress Loading Bar & Hide Ready/Picked Up Boxes
                         document.getElementById("prep-progress-container").classList.remove("hidden");
                         document.getElementById("ready-food-box").classList.add("hidden");
                         document.getElementById("picked-up-box").classList.add("hidden");
 
-                        // Status: PREPARING
                         const badge = document.getElementById("order-status-badge");
                         badge.className = "live-status-pill status-preparing";
                         document.getElementById("order-status-text").innerText = "Order Confirmed • Food Being Prepared";
@@ -1312,12 +1396,10 @@
                         document.getElementById("step-success").classList.remove("hidden");
                         setTopNotice("hide");
 
-                        // Hide Progress Loading Bar & Picked Box, Reveal Packed Food Box
                         document.getElementById("prep-progress-container").classList.add("hidden");
                         document.getElementById("picked-up-box").classList.add("hidden");
                         document.getElementById("ready-food-box").classList.remove("hidden");
 
-                        // Status: READY FOR PICKUP
                         document.getElementById("success-icon").innerText = "✓";
                         document.getElementById("success-heading").innerText = "";
                         document.getElementById("success-subtext").innerHTML = "";
@@ -1335,12 +1417,10 @@
                         document.getElementById("step-success").classList.remove("hidden");
                         setTopNotice("hide");
 
-                        // Hide Progress Bar & Ready Box, Reveal Picked Up Box
                         document.getElementById("prep-progress-container").classList.add("hidden");
                         document.getElementById("ready-food-box").classList.add("hidden");
                         document.getElementById("picked-up-box").classList.remove("hidden");
 
-                        // Status: PICKED UP
                         document.getElementById("success-icon").innerText = "🌾";
                         document.getElementById("success-heading").innerText = "";
                         document.getElementById("success-subtext").innerHTML = "";
@@ -1352,7 +1432,6 @@
                         document.getElementById("conf-status-label").innerText = "PICKED UP";
                         document.getElementById("conf-status-label").style.color = "#1971c2";
 
-                        // Auto-upload updated receipt snapshot to Google Sheet
                         if (!hasUploadedPickedSnapshot) {
                             hasUploadedPickedSnapshot = true;
                             uploadUpdatedReceiptSnapshot(orderId);
@@ -1374,9 +1453,13 @@
         async function uploadUpdatedReceiptSnapshot(orderId) {
             try {
                 const receiptElem = document.getElementById("savable-receipt");
+                if (!window.html2canvas || !receiptElem) return;
+                
                 const canvas = await html2canvas(receiptElem, {
                     scale: 2,
-                    backgroundColor: "#ffffff"
+                    backgroundColor: "#ffffff",
+                    logging: false,
+                    useCORS: true
                 });
                 const updatedImageBase64 = canvas.toDataURL("image/png");
                 const customerName = document.getElementById("cust-name").value.trim();
@@ -1397,21 +1480,48 @@
         }
 
         function copyUpiId() {
-            navigator.clipboard.writeText(RESTAURANT_UPI_ID).then(() => {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(RESTAURANT_UPI_ID).then(() => {
+                    alert("UPI ID copied: " + RESTAURANT_UPI_ID);
+                }).catch(() => fallbackCopyUpi());
+            } else {
+                fallbackCopyUpi();
+            }
+        }
+
+        function fallbackCopyUpi() {
+            const textArea = document.createElement("textarea");
+            textArea.value = RESTAURANT_UPI_ID;
+            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
                 alert("UPI ID copied: " + RESTAURANT_UPI_ID);
-            });
+            } catch (err) {
+                prompt("Copy UPI ID manually:", RESTAURANT_UPI_ID);
+            }
+            document.body.removeChild(textArea);
         }
 
         async function downloadReceipt() {
-            const receiptElem = document.getElementById("savable-receipt");
-            const canvas = await html2canvas(receiptElem, {
-                scale: 2,
-                backgroundColor: "#ffffff"
-            });
-            const link = document.createElement("a");
-            link.download = `Receipt_${activeOrderId}.png`;
-            link.href = canvas.toDataURL("image/png");
-            link.click();
+            try {
+                const receiptElem = document.getElementById("savable-receipt");
+                const canvas = await html2canvas(receiptElem, {
+                    scale: 2,
+                    backgroundColor: "#ffffff",
+                    logging: false,
+                    useCORS: true
+                });
+                const link = document.createElement("a");
+                link.download = `Receipt_${activeOrderId}.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+            } catch (err) {
+                alert("Could not generate downloadable image. Please take a screenshot of the order receipt.");
+            }
         }
 
         // Initialize on startup
