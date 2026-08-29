@@ -5,7 +5,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Yaady's Millet Roti Meals - Orders</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- jsPDF for instant client-side vector PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             --primary: #c92a2a;
@@ -519,6 +520,15 @@
         .btn-download { background: #1971c2; margin-top: 10px; }
         .btn-download:hover { background: #1864ab; }
 
+        .btn-notify-perm {
+            background: #20c997;
+            color: #fff;
+            margin-top: 8px;
+            font-size: 13px;
+            padding: 10px;
+        }
+        .btn-notify-perm:hover { background: #12b886; }
+
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
@@ -712,9 +722,9 @@
 <body>
 
     <div class="container">
-        <div id="top-warning-banner" onclick="handleBannerClick()">
+        <!--<div id="top-warning-banner" onclick="handleBannerClick()">
             🔄 Click here to refresh the menu before ordering.
-        </div>
+        </div>-->
 
         <!-- 1. Order Input View -->
         <div id="step-order" class="card">
@@ -839,6 +849,11 @@
                 ↩ Cancel / Edit Order <br> [Please do not cancel once you have made the payment.]
             </button>
 
+            <!-- Push Notification Permission Request Button (If not granted) -->
+            <button type="button" id="btn-enable-notify" class="btn btn-notify-perm" onclick="requestNotificationPermission()">
+                🔔 Enable Instant Status Notifications on this Device
+            </button>
+
             <div style="margin-top: 16px; padding: 12px; background: #e7f5ff; border-radius: 8px; border: 1px solid #d0ebff;">
                 <div class="spinner"></div>
                 <div style="font-size: 13px; color: #1971c2; font-weight: 600;">Waiting for kitchen to confirm your payment...</div>
@@ -914,7 +929,8 @@
                 </div>
             </div>
 
-            <button type="button" class="btn btn-download" onclick="downloadReceipt()">📥 Download Receipt</button>
+            <!-- Vector PDF Download Button -->
+            <button type="button" class="btn btn-download" onclick="downloadVectorReceiptPdf()">📄 Download Vector PDF Receipt</button>
             <button type="button" class="btn btn-secondary" onclick="window.location.reload()">Place Another Order</button>
         </div>
 
@@ -984,8 +1000,10 @@
         let activeOrderId = null;
         let activeTotal = 0;
         let pollTimer = null;
+        let configSyncTimer = null;
+        let lastKnownOrderStatus = "";
         let currentBannerState = "start";
-        let hasUploadedPickedSnapshot = false;
+        let lastConfirmedOrderData = null;
 
         let touchStartY = 0;
         window.addEventListener('touchstart', function(e) {
@@ -1001,6 +1019,37 @@
                 }
             }
         }, { passive: false });
+
+        function requestNotificationPermission() {
+            if (!("Notification" in window)) {
+                alert("Browser notifications are not supported on this device.");
+                return;
+            }
+
+            Notification.requestPermission().then(permission => {
+                const btn = document.getElementById("btn-enable-notify");
+                if (permission === "granted") {
+                    if (btn) btn.style.display = "none";
+                    showLocalNotification("Notifications Active 🔔", "You will receive live updates when your order status changes.");
+                } else {
+                    alert("Notification permission denied. You can still see updates live on this page.");
+                }
+            });
+        }
+
+        function showLocalNotification(title, bodyText) {
+            if ("Notification" in window && Notification.permission === "granted") {
+                try {
+                    new Notification(title, {
+                        body: bodyText,
+                        icon: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=128&q=80",
+                        badge: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=128&q=80"
+                    });
+                } catch (e) {
+                    console.warn("Notification trigger notice:", e);
+                }
+            }
+        }
 
         function setTopNotice(type) {
             currentBannerState = type;
@@ -1077,21 +1126,40 @@
                 });
                 const data = await response.json();
 
+                const previousStoreState = isStoreOpen;
+                const previousOutOfStock = JSON.stringify(outOfStockList);
+
                 isStoreOpen = data.storeOpen !== false;
                 outOfStockList = Array.isArray(data.outOfStock) ? data.outOfStock : [];
 
+                const msgDiv = document.getElementById("closed-message");
+                const orderInputsDiv = document.getElementById("order-inputs");
+
                 if (!isStoreOpen) {
-                    document.getElementById("order-inputs").classList.add("hidden");
-                    const msgDiv = document.getElementById("closed-message");
+                    orderInputsDiv.classList.add("hidden");
                     msgDiv.className = "closed-banner";
-                    msgDiv.innerText = `⚠️ We are currently CLOSED/OUT OF STOCK. We may reopen in an hour. Please check back later.`;
+                    msgDiv.innerText = `⚠️ We are currently CLOSED / OUT OF STOCK. We may reopen in an hour. Please check back later.`;
                     msgDiv.classList.remove("hidden");
-                    return;
+                } else {
+                    msgDiv.classList.add("hidden");
+                    orderInputsDiv.classList.remove("hidden");
                 }
+
+                if (previousStoreState !== isStoreOpen || previousOutOfStock !== JSON.stringify(outOfStockList)) {
+                    renderMenu();
+                    updateLiveSummary();
+                }
+
+                return data;
             } catch (err) {
-                console.warn("Could not load dynamic configuration.", err);
+                console.warn("Live config sync notice:", err);
+                return { storeOpen: isStoreOpen, outOfStock: outOfStockList };
             }
-            renderMenu();
+        }
+
+        function startLiveConfigSync() {
+            if (configSyncTimer) clearInterval(configSyncTimer);
+            configSyncTimer = setInterval(fetchStoreConfig, 10000);
         }
 
         function renderMenu() {
@@ -1264,32 +1332,84 @@
             window.scrollTo(0, 0);
         }
 
-        async function captureElementSafely(element) {
-            if (!window.html2canvas || !element) return "";
-            try {
-                const canvasPromise = html2canvas(element, {
-                    scale: 1.5,
-                    backgroundColor: "#ffffff",
-                    logging: false,
-                    useCORS: true
-                });
-                
-                const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 1500));
-                const canvas = await Promise.race([canvasPromise, timeoutPromise]);
-                
-                return canvas ? canvas.toDataURL("image/png") : "";
-            } catch (err) {
-                console.warn("Canvas capture bypassed:", err);
-                return "";
-            }
-        }
-
+        // Pre-Check Availability Before Placing Order
         async function sendOrder() {
             const submitBtn = document.getElementById("submit-btn");
             submitBtn.disabled = true;
-            submitBtn.innerText = "Confirming Order...";
+            submitBtn.innerText = "Checking Kitchen Availability...";
 
             try {
+                // 1. Live Fetch Store Configuration & Out of Stock List from Google Sheet
+                const latestConfig = await fetchStoreConfig();
+                const isCurrentlyOpen = latestConfig.storeOpen !== false;
+                const currentOutOfStock = Array.isArray(latestConfig.outOfStock) ? latestConfig.outOfStock : [];
+
+                // 2. Check if restaurant is closed
+                if (!isCurrentlyOpen) {
+                    alert("⚠️ Sorry, Yaady's Kitchen is currently CLOSED or not accepting orders. Please check back later.");
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "Confirm & Place Order";
+                    document.getElementById("step-review").classList.add("hidden");
+                    document.getElementById("step-order").classList.remove("hidden");
+                    setTopNotice("start");
+                    return;
+                }
+
+                // 3. Check if any selected items are now Out of Stock
+                const unavailableItemNames = [];
+                let hasRemovedItems = false;
+
+                MENU.forEach(dish => {
+                    if ((cart[dish.id] || 0) > 0 && currentOutOfStock.includes(dish.id)) {
+                        unavailableItemNames.push(dish.name);
+                        cart[dish.id] = 0; // Automatically remove from cart
+                        hasRemovedItems = true;
+                    }
+                });
+
+                // 4. If items were removed, inform customer and update review screen
+                if (hasRemovedItems) {
+                    const newTotal = updateLiveSummary();
+                    renderMenu(); // Re-render menu to show out of stock tag
+
+                    if (newTotal <= 0) {
+                        alert(`⚠️ Non-Availability Notice:\nThe following item(s) are currently OUT OF STOCK and were removed:\n• ${unavailableItemNames.join("\n• ")}\n\nYour cart is now empty. Please choose available dishes.`);
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = "Confirm & Place Order";
+                        document.getElementById("step-review").classList.add("hidden");
+                        document.getElementById("step-order").classList.remove("hidden");
+                        setTopNotice("start");
+                        return;
+                    } else {
+                        alert(`⚠️ Non-Availability Notice:\nThe following item(s) just went OUT OF STOCK and were removed from your order:\n• ${unavailableItemNames.join("\n• ")}\n\nYour order summary and total have been updated. Please review before proceeding.`);
+                        
+                        // Re-render the review screen with remaining available items
+                        const date = document.getElementById("pickup-date").value;
+                        const time = document.getElementById("pickup-time").value;
+                        const itemsNode = document.getElementById("rcpt-items");
+                        itemsNode.innerHTML = "";
+                        
+                        MENU.forEach(dish => {
+                            if (cart[dish.id] > 0) {
+                                itemsNode.innerHTML += `
+                                  <div class="receipt-line">
+                                    <span>${cart[dish.id]}x ${dish.name}</span>
+                                    <span>₹${cart[dish.id] * dish.price}</span>
+                                  </div>
+                                `;
+                            }
+                        });
+
+                        document.getElementById("rcpt-total").innerText = newTotal;
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = "Confirm & Place Order";
+                        return; // Let user see updated review
+                    }
+                }
+
+                // Proceed with Order Submission if everything is available
+                submitBtn.innerText = "Confirming Order...";
+
                 const name = document.getElementById("cust-name").value.trim();
                 const phone = document.getElementById("cust-phone").value.trim();
                 const pickupDate = document.getElementById("pickup-date").value;
@@ -1298,10 +1418,13 @@
                 const totalAmount = `₹${activeTotal}`;
 
                 activeOrderId = "YMR-" + Math.floor(1000 + Math.random() * 9000);
+                lastKnownOrderStatus = "PENDING";
 
-                const receiptElement = document.getElementById("receipt-target");
-                const imageBase64 = await captureElementSafely(receiptElement);
+                if ("Notification" in window && Notification.permission === "default") {
+                    Notification.requestPermission();
+                }
 
+                // Instant UI Navigation to Payment Screen
                 document.getElementById("step-review").classList.add("hidden");
                 document.getElementById("live-order-bar").classList.add("hidden");
                 document.getElementById("step-payment").classList.remove("hidden");
@@ -1321,8 +1444,11 @@
 
                 const confItemsNode = document.getElementById("conf-items");
                 confItemsNode.innerHTML = "";
+                
+                const itemsList = [];
                 MENU.forEach(dish => {
                     if (cart[dish.id] > 0) {
+                        itemsList.push({ name: dish.name, qty: cart[dish.id], price: dish.price });
                         confItemsNode.innerHTML += `
                           <div class="receipt-line">
                             <span>${cart[dish.id]}x ${dish.name}</span>
@@ -1331,6 +1457,17 @@
                         `;
                     }
                 });
+
+                lastConfirmedOrderData = {
+                    orderId: activeOrderId,
+                    name: name,
+                    phone: phone,
+                    pickupDate: pickupDate,
+                    pickupTime: pickupTimeFormatted,
+                    itemsList: itemsList,
+                    totalPrice: totalAmount,
+                    timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
+                };
 
                 const upiPaymentUri = `upi://pay?pa=${RESTAURANT_UPI_ID}&pn=Yaadys%20Millet%20Roti%20Meals&am=${activeTotal}&cu=INR&tn=Order%20${activeOrderId}`;
                 document.getElementById("direct-upi-btn").href = upiPaymentUri;
@@ -1357,8 +1494,8 @@
                     pickupDate: pickupDate,
                     pickupTime: pickupTimeFormatted,
                     itemsSummary: itemsSummary,
-                    totalPrice: totalAmount,
-                    receiptImage: imageBase64
+                    itemsList: itemsList,
+                    totalPrice: totalAmount
                 };
 
                 fetch(SCRIPT_URL, {
@@ -1407,6 +1544,11 @@
                         document.getElementById("order-status-text").innerText = "Order Confirmed • Food Being Prepared";
                         document.getElementById("conf-status-label").innerText = "PREPARING";
                         document.getElementById("conf-status-label").style.color = "#e67700";
+
+                        if (lastKnownOrderStatus !== "ACCEPTED") {
+                            lastKnownOrderStatus = "ACCEPTED";
+                            showLocalNotification("Order Confirmed! 🍳", `Your Order #${orderId} is accepted. Food preparation is underway.`);
+                        }
                     }
                     else if (currentStatus === "READY" || currentStatus === "COMPLETED") {
                         document.getElementById("step-payment").classList.add("hidden");
@@ -1427,6 +1569,11 @@
 
                         document.getElementById("conf-status-label").innerText = "READY FOR PICKUP";
                         document.getElementById("conf-status-label").style.color = "#2b8a3e";
+
+                        if (lastKnownOrderStatus !== "READY") {
+                            lastKnownOrderStatus = "READY";
+                            showLocalNotification("Food is Ready! 🛍️", `Order #${orderId} is packed and ready for pickup at Yaady's counter.`);
+                        }
                     }
                     else if (currentStatus === "PICKED_UP" || currentStatus === "PICKED UP" || currentStatus === "PICKED" || currentStatus === "DELIVERED" || currentStatus === "COLLECTED") {
                         clearInterval(pollTimer);
@@ -1449,9 +1596,9 @@
                         document.getElementById("conf-status-label").innerText = "PICKED UP";
                         document.getElementById("conf-status-label").style.color = "#1971c2";
 
-                        if (!hasUploadedPickedSnapshot) {
-                            hasUploadedPickedSnapshot = true;
-                            uploadUpdatedReceiptSnapshot(orderId);
+                        if (lastKnownOrderStatus !== "PICKED_UP") {
+                            lastKnownOrderStatus = "PICKED_UP";
+                            showLocalNotification("Order Picked Up 🌾", `Thank you for dining with Yaady's! Enjoy your meal.`);
                         }
                     }
                     else if (currentStatus === "REJECTED" || currentStatus === "CANCELLED") {
@@ -1460,6 +1607,11 @@
                         document.getElementById("step-success").classList.add("hidden");
                         document.getElementById("step-rejected").classList.remove("hidden");
                         setTopNotice("hide");
+
+                        if (lastKnownOrderStatus !== "CANCELLED") {
+                            lastKnownOrderStatus = "CANCELLED";
+                            showLocalNotification("Order Cancelled", `Order #${orderId} could not be completed.`);
+                        }
                     }
                 } catch (err) {
                     console.warn("Polling error:", err);
@@ -1467,27 +1619,115 @@
             }, 4000);
         }
 
-        async function uploadUpdatedReceiptSnapshot(orderId) {
+        // True Vector PDF Generation
+        function downloadVectorReceiptPdf() {
             try {
-                const receiptElem = document.getElementById("savable-receipt");
-                if (!window.html2canvas || !receiptElem) return;
-                
-                const updatedImageBase64 = await captureElementSafely(receiptElem);
-                const customerName = document.getElementById("cust-name").value.trim();
+                if (!window.jspdf || !window.jspdf.jsPDF) {
+                    alert("PDF library is loading. Please try again in a moment.");
+                    return;
+                }
 
-                await fetch(SCRIPT_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify({
-                        action: "UPDATE_RECEIPT_SNAPSHOT",
-                        orderId: orderId,
-                        name: customerName,
-                        receiptImage: updatedImageBase64
-                    }),
-                    redirect: "follow"
+                const data = lastConfirmedOrderData;
+                if (!data) {
+                    alert("Order details not found. Please screenshot the receipt.");
+                    return;
+                }
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: [80, 180]
                 });
+
+                // Header
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(13);
+                doc.setTextColor(201, 42, 42);
+                doc.text("YAADY'S MILLET ROTI MEALS", 40, 12, { align: "center" });
+
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(8);
+                doc.setTextColor(100, 100, 100);
+                doc.text("TAKEAWAY ORDER RECEIPT", 40, 17, { align: "center" });
+                doc.text(data.timestamp, 40, 21, { align: "center" });
+
+                // Divider line
+                doc.setDrawColor(200, 200, 200);
+                doc.setLineDashPattern([1, 1], 0);
+                doc.line(6, 24, 74, 24);
+
+                // Order Meta Information
+                doc.setFontSize(8.5);
+                doc.setTextColor(33, 37, 41);
+                
+                doc.setFont("helvetica", "bold");
+                doc.text("Order ID:", 6, 29);
+                doc.setTextColor(201, 42, 42);
+                doc.text(data.orderId, 74, 29, { align: "right" });
+
+                doc.setTextColor(33, 37, 41);
+                doc.setFont("helvetica", "bold");
+                doc.text("Customer:", 6, 34);
+                doc.setFont("helvetica", "normal");
+                doc.text(data.name, 74, 34, { align: "right" });
+
+                doc.setFont("helvetica", "bold");
+                doc.text("Mobile:", 6, 39);
+                doc.setFont("helvetica", "normal");
+                doc.text(data.phone, 74, 39, { align: "right" });
+
+                doc.setFont("helvetica", "bold");
+                doc.text("Pickup Slot:", 6, 44);
+                doc.setFont("helvetica", "normal");
+                doc.text(`${data.pickupDate} ${data.pickupTime}`, 74, 44, { align: "right" });
+
+                // Table Header
+                doc.line(6, 47, 74, 47);
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(8);
+                doc.text("Item", 6, 51);
+                doc.text("Amount", 74, 51, { align: "right" });
+                doc.line(6, 53, 74, 53);
+
+                // Items list
+                let y = 58;
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(8);
+
+                data.itemsList.forEach((item) => {
+                    const itemLine = `${item.qty}x ${item.name}`;
+                    const itemTotal = `₹${item.price * item.qty}`;
+                    
+                    const splitText = doc.splitTextToSize(itemLine, 50);
+                    doc.text(splitText, 6, y);
+                    doc.text(itemTotal, 74, y, { align: "right" });
+                    
+                    y += (splitText.length * 4.5);
+                });
+
+                // Total line
+                doc.line(6, y, 74, y);
+                y += 5;
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(10);
+                doc.text("Total Amount:", 6, y);
+                doc.setTextColor(201, 42, 42);
+                doc.text(data.totalPrice, 74, y, { align: "right" });
+
+                // Footer Note
+                y += 10;
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(7.5);
+                doc.setTextColor(120, 120, 120);
+                doc.text("Neknampur, Manikonda, Hyderabad", 40, y, { align: "center" });
+                doc.text("UPI ID: 9000001690@upi", 40, y + 4, { align: "center" });
+                doc.text("Thank you for dining with Yaady's!", 40, y + 8, { align: "center" });
+
+                doc.save(`Receipt_${data.orderId}.pdf`);
             } catch (err) {
-                console.warn("Could not sync updated picked-up receipt snapshot:", err);
+                console.error("Vector PDF error:", err);
+                alert("Could not generate PDF. Please take a screenshot of the receipt.");
             }
         }
 
@@ -1518,27 +1758,11 @@
             document.body.removeChild(textArea);
         }
 
-        async function downloadReceipt() {
-            try {
-                const receiptElem = document.getElementById("savable-receipt");
-                const canvas = await html2canvas(receiptElem, {
-                    scale: 2,
-                    backgroundColor: "#ffffff",
-                    logging: false,
-                    useCORS: true
-                });
-                const link = document.createElement("a");
-                link.download = `Receipt_${activeOrderId}.png`;
-                link.href = canvas.toDataURL("image/png");
-                link.click();
-            } catch (err) {
-                alert("Could not generate downloadable image. Please take a screenshot of the order receipt.");
-            }
-        }
-
+        // Initialize on startup
         setTopNotice("start");
         adjustPickupTimeDefaults();
         fetchStoreConfig();
+        startLiveConfigSync();
     </script>
 </body>
 
