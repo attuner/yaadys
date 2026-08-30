@@ -1165,6 +1165,7 @@
         let lastKnownOrderStatus = "";
         let currentBannerState = "start";
         let lastConfirmedOrderData = null;
+        let isFirstConfigLoad = true;
 
         let touchStartY = 0;
         window.addEventListener('touchstart', function (e) {
@@ -1317,7 +1318,8 @@
                     orderInputsDiv.classList.remove("hidden");
                 }
 
-                if (previousStoreState !== isStoreOpen || previousOutOfStock !== JSON.stringify(outOfStockList)) {
+                if (isFirstConfigLoad || previousStoreState !== isStoreOpen || previousOutOfStock !== JSON.stringify(outOfStockList)) {
+                    isFirstConfigLoad = false;
                     renderMenu();
                     updateLiveSummary();
                 }
@@ -1325,6 +1327,11 @@
                 return data;
             } catch (err) {
                 console.warn("Live config sync notice:", err);
+                if (isFirstConfigLoad) {
+                    isFirstConfigLoad = false;
+                    renderMenu();
+                    updateLiveSummary();
+                }
                 return { storeOpen: isStoreOpen, outOfStock: outOfStockList };
             }
         }
@@ -1932,6 +1939,7 @@
         }
 
         adjustPickupTimeDefaults();
+        renderMenu();
         fetchStoreConfig();
         startLiveConfigSync();
         recordPageView();
