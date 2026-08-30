@@ -23,7 +23,8 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        html, body {
+        html,
+        body {
             overscroll-behavior-y: none;
             -webkit-font-smoothing: antialiased;
         }
@@ -77,12 +78,14 @@
             .card {
                 padding: 26px;
             }
+
             .global-brand-title {
                 font-size: 24px;
             }
         }
 
-        h2, h3 {
+        h2,
+        h3 {
             margin-top: 0;
             color: #111;
         }
@@ -190,9 +193,17 @@
             opacity: 0.88;
         }
 
-        .btn-zomato { background: #cb202d; }
-        .btn-swiggy { background: #fc8019; }
-        .btn-toing { background: #2f3640; }
+        .btn-zomato {
+            background: #cb202d;
+        }
+
+        .btn-swiggy {
+            background: #fc8019;
+        }
+
+        .btn-toing {
+            background: #2f3640;
+        }
 
         /* Wrapped Multi-Row Category Tabs */
         .category-tabs {
@@ -230,17 +241,45 @@
             }
         }
 
-        .cat-plain { border-color: #d97706; color: #b45309; }
-        .cat-plain.active { background: #d97706; color: #fff; }
+        .cat-plain {
+            border-color: #d97706;
+            color: #b45309;
+        }
 
-        .cat-curries { border-color: #c92a2a; color: #c92a2a; }
-        .cat-curries.active { background: #c92a2a; color: #fff; }
+        .cat-plain.active {
+            background: #d97706;
+            color: #fff;
+        }
 
-        .cat-specials { border-color: #059669; color: #059669; }
-        .cat-specials.active { background: #059669; color: #fff; }
+        .cat-curries {
+            border-color: #c92a2a;
+            color: #c92a2a;
+        }
 
-        .cat-meals { border-color: #2563eb; color: #2563eb; }
-        .cat-meals.active { background: #2563eb; color: #fff; }
+        .cat-curries.active {
+            background: #c92a2a;
+            color: #fff;
+        }
+
+        .cat-specials {
+            border-color: #059669;
+            color: #059669;
+        }
+
+        .cat-specials.active {
+            background: #059669;
+            color: #fff;
+        }
+
+        .cat-meals {
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .cat-meals.active {
+            background: #2563eb;
+            color: #fff;
+        }
 
         #menu-list {
             display: grid;
@@ -355,8 +394,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .live-status-pill {
@@ -390,9 +434,17 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.03);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         .pulse-dot {
@@ -408,7 +460,7 @@
             border-radius: 12px;
             padding: 18px 16px;
             margin: 16px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
             text-align: left;
         }
 
@@ -435,21 +487,26 @@
             width: 100%;
             height: 100%;
             border-radius: 20px;
-            background: linear-gradient(45deg, 
-                #c92a2a 25%, 
-                #f03e3e 25%, 
-                #f03e3e 50%, 
-                #c92a2a 50%, 
-                #c92a2a 75%, 
-                #f03e3e 75%, 
-                #f03e3e 100%);
+            background: linear-gradient(45deg,
+                    #c92a2a 25%,
+                    #f03e3e 25%,
+                    #f03e3e 50%,
+                    #c92a2a 50%,
+                    #c92a2a 75%,
+                    #f03e3e 75%,
+                    #f03e3e 100%);
             background-size: 28px 28px;
             animation: moveStripes 1.2s linear infinite;
         }
 
         @keyframes moveStripes {
-            0% { background-position: 0 0; }
-            100% { background-position: 28px 0; }
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 28px 0;
+            }
         }
 
         .progress-footer {
@@ -482,9 +539,19 @@
         }
 
         @keyframes bounceIn {
-            0% { transform: scale(0.9); opacity: 0; }
-            60% { transform: scale(1.02); opacity: 1; }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            60% {
+                transform: scale(1.02);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         .packed-bag-icon {
@@ -514,8 +581,14 @@
             transition: background 0.2s;
         }
 
-        .btn:hover { background: var(--primary-hover); }
-        .btn-secondary { background: #6c757d; margin-top: 8px; }
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-top: 8px;
+        }
 
         .btn-upi-pay {
             background: #5c7cfa;
@@ -531,7 +604,10 @@
             font-size: 15px;
             margin-top: 10px;
         }
-        .btn-upi-pay:hover { background: #4263eb; }
+
+        .btn-upi-pay:hover {
+            background: #4263eb;
+        }
 
         .btn-whatsapp {
             background: #25d366;
@@ -547,10 +623,19 @@
             font-weight: 700;
             font-size: 14px;
         }
-        .btn-whatsapp:hover { background: #1eb956; }
 
-        .btn-download { background: #1971c2; margin-top: 10px; }
-        .btn-download:hover { background: #1864ab; }
+        .btn-whatsapp:hover {
+            background: #1eb956;
+        }
+
+        .btn-download {
+            background: #1971c2;
+            margin-top: 10px;
+        }
+
+        .btn-download:hover {
+            background: #1864ab;
+        }
 
         .btn-notify-perm {
             background: #20c997;
@@ -559,7 +644,10 @@
             font-size: 13px;
             padding: 10px;
         }
-        .btn-notify-perm:hover { background: #12b886; }
+
+        .btn-notify-perm:hover {
+            background: #12b886;
+        }
 
         .btn:disabled {
             opacity: 0.6;
@@ -579,7 +667,7 @@
             justify-content: space-between;
             align-items: center;
             z-index: 100;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
         }
 
         .live-bar-container {
@@ -713,7 +801,9 @@
             font-weight: 700;
         }
 
-        .hidden { display: none !important; }
+        .hidden {
+            display: none !important;
+        }
 
         .info-banner {
             background: #fff3cd;
@@ -770,17 +860,22 @@
                 <div class="delivery-icons">
                     <a href="https://www.zomato.com/hyderabad/yaadys-millet-roti-meals-rajendra-nagar/order"
                         target="_blank" rel="noopener noreferrer" class="app-icon-btn btn-zomato">Zomato</a>
-                    <a href="https://www.swiggy.com/menu/1411294?source=sharing"
-                        target="_blank" rel="noopener noreferrer" class="app-icon-btn btn-swiggy">Swiggy</a>
+                    <a href="https://www.swiggy.com/menu/1411294?source=sharing" target="_blank"
+                        rel="noopener noreferrer" class="app-icon-btn btn-swiggy">Swiggy</a>
                     <a href="https://toing.app" target="_blank" rel="noopener noreferrer"
                         class="app-icon-btn btn-toing">Toing</a>
                 </div>
             </div>
 
             <p style="margin-top:0; font-size:13.5px; color:#6c757d; line-height: 1.5; text-align: justify;">
-                Yaady’s is a home-based cloud kitchen dedicated to millet-based rotis and wholesome meals, inspired by the traditional foods that have been enjoyed for generations. We see millets as “health tuners” and our vision is to bring original traditional foods back to the plate, staying true to their authentic flavors. We strive to preserve its essence while making it accessible for today’s lifestyle. Every meal at Yaady’s is prepared fresh only after your order is received. We currently offer takeaway pickup orders only. Get directions to <a
-                    href="https://maps.app.goo.gl/3vTmmsbHN5kg98qF6" target="_blank" rel="noopener noreferrer">Yaady's</a> at Neknampur, Manikonda, Hyderabad.
-                    <br><br><strong>Yaady’s — The Traditional Health Tuner.</strong>
+                Yaady’s is a home-based cloud kitchen dedicated to millet-based rotis and wholesome meals, inspired by
+                the traditional foods that have been enjoyed for generations. We see millets as “health tuners” and our
+                vision is to bring original traditional foods back to the plate, staying true to their authentic
+                flavors. We strive to preserve its essence while making it accessible for today’s lifestyle. Every meal
+                at Yaady’s is prepared fresh only after your order is received. We currently offer takeaway pickup
+                orders only. Get directions to <a href="https://maps.app.goo.gl/3vTmmsbHN5kg98qF6" target="_blank"
+                    rel="noopener noreferrer">Yaady's</a> at Neknampur, Manikonda, Hyderabad.
+                <br><br><strong>Yaady’s — The Traditional Health Tuner.</strong>
             </p>
             <div id="closed-message" class="hidden"></div>
             <h2>Order Your Favorite Millet Roti Meals</h2>
@@ -810,10 +905,14 @@
                 <h3 style="margin-top: 22px; margin-bottom: 8px;">Select Dishes</h3>
                 <!-- Multi-Row Wrapped Category Tabs -->
                 <div class="category-tabs" id="cat-nav">
-                    <button type="button" class="cat-btn cat-plain active" onclick="filterCategory('Plain Rotis', this)">Plain Rotis</button>
-                    <button type="button" class="cat-btn cat-curries" onclick="filterCategory('Rotis & Curries', this)">Rotis & Curries</button>
-                    <button type="button" class="cat-btn cat-specials" onclick="filterCategory('Specials', this)">Specials</button>
-                    <button type="button" class="cat-btn cat-meals" onclick="filterCategory('Meals', this)">Meals</button>
+                    <button type="button" class="cat-btn cat-plain active"
+                        onclick="filterCategory('Plain Rotis', this)">Plain Rotis</button>
+                    <button type="button" class="cat-btn cat-curries"
+                        onclick="filterCategory('Rotis & Curries', this)">Rotis & Curries</button>
+                    <button type="button" class="cat-btn cat-specials"
+                        onclick="filterCategory('Specials', this)">Specials</button>
+                    <button type="button" class="cat-btn cat-meals"
+                        onclick="filterCategory('Meals', this)">Meals</button>
                 </div>
 
                 <div id="menu-list"></div>
@@ -853,18 +952,22 @@
         <!-- 3. Direct Payment Screen -->
         <div id="step-payment" class="card hidden" style="text-align: center;">
             <h2 style="color: #2b8a3e;">Complete Payment to Place Order</h2>
-            <p style="color: #495057; font-size: 14px;">Please complete the UPI payment below. Once verified, your order will be accepted.</p>
+            <p style="color: #495057; font-size: 14px;">Please complete the UPI payment below. Once verified, your order
+                will be accepted.</p>
 
             <div class="payment-box">
-                <div style="font-size: 13px; color: #6c757d; margin-bottom: 4px;">Order ID: <strong id="pay-order-id" style="color: var(--primary);"></strong></div>
-                <h3 style="margin: 0; font-size: 20px;">Pay Amount: <span id="pay-amount-display" style="color: var(--primary);"></span></h3>
+                <div style="font-size: 13px; color: #6c757d; margin-bottom: 4px;">Order ID: <strong id="pay-order-id"
+                        style="color: var(--primary);"></strong></div>
+                <h3 style="margin: 0; font-size: 20px;">Pay Amount: <span id="pay-amount-display"
+                        style="color: var(--primary);"></span></h3>
 
                 <a id="upi-qr-link" href="#" class="qr-link-wrapper" title="Click to Pay directly with UPI app">
                     <div class="qr-container">
                         <img id="upi-qr-image" src="" alt="UPI QR Code - Click to Pay" />
                     </div>
                 </a>
-                <div style="font-size: 12px; color: #1971c2; font-weight: 600; margin-bottom: 8px;">👆 Tap QR code or button below to launch UPI App</div>
+                <div style="font-size: 12px; color: #1971c2; font-weight: 600; margin-bottom: 8px;">👆 Tap QR code or
+                    button below to launch UPI App</div>
 
                 <a id="direct-upi-btn" href="#" class="btn-upi-pay">
                     ⚡ Pay ₹<span id="btn-pay-amount">0</span> via UPI App
@@ -876,7 +979,8 @@
                         <button type="button" class="copy-btn" onclick="copyUpiId()">Copy</button>
                     </span>
                 </div>
-                <p style="font-size: 11px; color: #6c757d; margin-top: 8px; margin-bottom: 0;">Order ID auto-filled in remarks: <strong id="remarks-id-preview"></strong></p>
+                <p style="font-size: 11px; color: #6c757d; margin-top: 8px; margin-bottom: 0;">Order ID auto-filled in
+                    remarks: <strong id="remarks-id-preview"></strong></p>
             </div>
 
             <a id="wa-contact-btn" href="#" target="_blank" class="btn-whatsapp">
@@ -887,14 +991,18 @@
                 ↩ Cancel / Edit Order <br> [Please do not cancel once you have made the payment.]
             </button>
 
-            <button type="button" id="btn-enable-notify" class="btn btn-notify-perm" onclick="requestNotificationPermission()">
+            <button type="button" id="btn-enable-notify" class="btn btn-notify-perm"
+                onclick="requestNotificationPermission()">
                 🔔 Enable Instant Status Notifications on this Device
             </button>
 
-            <div style="margin-top: 16px; padding: 12px; background: #e7f5ff; border-radius: 8px; border: 1px solid #d0ebff;">
+            <div
+                style="margin-top: 16px; padding: 12px; background: #e7f5ff; border-radius: 8px; border: 1px solid #d0ebff;">
                 <div class="spinner"></div>
-                <div style="font-size: 13px; color: #1971c2; font-weight: 600;">Waiting for kitchen to confirm your payment...</div>
-                <div style="font-size: 11px; color: #6c757d; margin-top: 4px;">This page will automatically update once accepted.</div>
+                <div style="font-size: 13px; color: #1971c2; font-weight: 600;">Waiting for kitchen to confirm your
+                    payment...</div>
+                <div style="font-size: 11px; color: #6c757d; margin-top: 4px;">This page will automatically update once
+                    accepted.</div>
             </div>
         </div>
 
@@ -920,13 +1028,16 @@
                     <span>Ready by requested time</span>
                 </div>
             </div>
- 
+
             <div id="ready-food-box" class="ready-food-box hidden">
                 <div class="packed-bag-icon">
                     <span style="font-size: 44px;">🛍️</span>
                 </div>
-                <h3 style="color: #2b8a3e; margin: 0 0 6px 0; font-size: 18px;">Your Meal is Packed & Ready for Pickup!</h3>
-                <p style="font-size: 13px; color: #495057; margin: 0;">Please show your <strong>Order ID</strong> at the counter to collect your meal. Get directions to <a href='https://maps.app.goo.gl/3vTmmsbHN5kg98qF6' target='_blank' rel='noopener noreferrer'>Yaady's.</a></p>
+                <h3 style="color: #2b8a3e; margin: 0 0 6px 0; font-size: 18px;">Your Meal is Packed & Ready for Pickup!
+                </h3>
+                <p style="font-size: 13px; color: #495057; margin: 0;">Please show your <strong>Order ID</strong> at the
+                    counter to collect your meal. Get directions to <a href='https://maps.app.goo.gl/3vTmmsbHN5kg98qF6'
+                        target='_blank' rel='noopener noreferrer'>Yaady's.</a></p>
             </div>
 
             <div id="picked-up-box" class="pickedup-box hidden">
@@ -934,14 +1045,16 @@
                     <span style="font-size: 44px;">🌾</span>
                 </div>
                 <h3 style="color: #1971c2; margin: 0 0 6px 0; font-size: 18px;">Order Successfully Picked Up!</h3>
-                <p style="font-size: 13px; color: #495057; margin: 0;">Thank you! We hope you enjoy your wholesome millet meal. Have a wonderful day!</p>
-            </div> 
- 
-            <h3 id="success-heading" style="margin-bottom: 6px; font-size: 16px;">To view the live order status, please keep this page open and avoid refreshing or closing it.</h3> 
+                <p style="font-size: 13px; color: #495057; margin: 0;">Thank you! We hope you enjoy your wholesome
+                    millet meal. Have a wonderful day!</p>
+            </div>
+
+            <h3 id="success-heading" style="margin-bottom: 6px; font-size: 16px;">To view the live order status, please
+                keep this page open and avoid refreshing or closing it.</h3>
             <p id="success-subtext" style="color: #495057; font-size: 14px; line-height: 1.5; margin-bottom: 16px;">
-                Please head over to <a
-                    href="https://maps.app.goo.gl/3vTmmsbHN5kg98qF6" target="_blank" rel="noopener noreferrer">Yaady's</a> for pickup.
-            </p> 
+                Please head over to <a href="https://maps.app.goo.gl/3vTmmsbHN5kg98qF6" target="_blank"
+                    rel="noopener noreferrer">Yaady's</a> for pickup.
+            </p>
 
             <a id="wa-followup-btn" href="#" target="_blank" class="btn-whatsapp" style="margin-bottom: 16px;">
                 💬 Have a query? Contact us on WhatsApp.
@@ -957,7 +1070,8 @@
                 <div class="receipt-line"><strong>Customer:</strong> <span id="conf-name"></span></div>
                 <div class="receipt-line"><strong>Mobile:</strong> <span id="conf-phone"></span></div>
                 <div class="receipt-line"><strong>Pickup Slot:</strong> <span id="conf-slot"></span></div>
-                <div class="receipt-line"><strong>Current Status:</strong> <strong id="conf-status-label" style="color: #e67700;">PREPARING</strong></div>
+                <div class="receipt-line"><strong>Current Status:</strong> <strong id="conf-status-label"
+                        style="color: #e67700;">PREPARING</strong></div>
                 <hr style="border: 0; border-top: 1px dashed #ced4da; margin: 8px 0;" />
                 <div id="conf-items"></div>
                 <div class="receipt-line receipt-total">
@@ -967,21 +1081,25 @@
             </div>
 
             <!-- Vector PDF Download Button -->
-            <button type="button" class="btn btn-download" onclick="downloadVectorReceiptPdf()">📄 Download Vector PDF Receipt</button>
-            <button type="button" class="btn btn-secondary" onclick="window.open(window.location.href, '_blank')">Place Another Order</button>
+            <button type="button" class="btn btn-download" onclick="downloadVectorReceiptPdf()">📄 Download Vector PDF
+                Receipt</button>
+            <button type="button" class="btn btn-secondary" onclick="window.open(window.location.href, '_blank')">Place
+                Another Order</button>
         </div>
 
         <!-- 5. Rejected Screen -->
         <div id="step-rejected" class="card hidden" style="text-align: center;">
             <div style="font-size: 48px; color: #c92a2a; margin-bottom: 8px;">✕</div>
             <h2>Order Could Not Be Accepted</h2>
-            <p id="rejected-status-message" style="color: #495057;">The kitchen is currently overloaded or items are unavailable. Please try again later or order via Swiggy / Zomato.</p>
-            
+            <p id="rejected-status-message" style="color: #495057;">The kitchen is currently overloaded or items are
+                unavailable. Please try again later or order via Swiggy / Zomato.</p>
+
             <a id="wa-rejected-btn" href="#" target="_blank" class="btn-whatsapp" style="margin-bottom: 12px;">
                 💬 Contact Restaurant on WhatsApp
             </a>
-            
-            <button type="button" class="btn" onclick="window.open(window.location.href, '_blank')">Place Another Order</button>
+
+            <button type="button" class="btn" onclick="window.open(window.location.href, '_blank')">Place Another
+                Order</button>
         </div>
     </div>
 
@@ -989,7 +1107,8 @@
     <div id="live-order-bar" class="hidden">
         <div class="live-bar-container">
             <div>
-                <span id="bar-items-count">0 items</span> | <span class="live-total">₹<span id="bar-total">0</span></span>
+                <span id="bar-items-count">0 items</span> | <span class="live-total">₹<span
+                        id="bar-total">0</span></span>
             </div>
             <button type="button" class="live-btn" onclick="renderReview()">Review Order →</button>
         </div>
@@ -1048,11 +1167,11 @@
         let lastConfirmedOrderData = null;
 
         let touchStartY = 0;
-        window.addEventListener('touchstart', function(e) {
+        window.addEventListener('touchstart', function (e) {
             touchStartY = e.touches[0].pageY;
         }, { passive: true });
 
-        window.addEventListener('touchmove', function(e) {
+        window.addEventListener('touchmove', function (e) {
             const touchY = e.touches[0].pageY;
             const touchDiff = touchY - touchStartY;
             if (window.scrollY === 0 && touchDiff > 0) {
@@ -1061,6 +1180,27 @@
                 }
             }
         }, { passive: false });
+
+        // Silent Analytics Engine (No UI badges shown on website)
+        async function recordPageView() {
+            try {
+                let userUid = localStorage.getItem("ymr_analytics_uid");
+                if (!userUid) {
+                    userUid = "usr_" + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+                    localStorage.setItem("ymr_analytics_uid", userUid);
+                }
+
+                const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+                const platformTag = isMobile ? "Mobile Device" : "Desktop/Laptop";
+
+                await fetch(`${SCRIPT_URL}?action=PAGE_VIEW&uid=${encodeURIComponent(userUid)}&device=${encodeURIComponent(platformTag)}&t=${Date.now()}`, {
+                    method: "GET",
+                    mode: "no-cors"
+                });
+            } catch (err) {
+                console.warn("Analytics ping notice:", err);
+            }
+        }
 
         function requestNotificationPermission() {
             if (!("Notification" in window)) {
@@ -1122,7 +1262,7 @@
             const month = String(now.getMonth() + 1).padStart(2, "0");
             const day = String(now.getDate()).padStart(2, "0");
             const todayStr = `${year}-${month}-${day}`;
-            
+
             const dateInput = document.getElementById("pickup-date");
             const timeInput = document.getElementById("pickup-time");
 
@@ -1152,7 +1292,7 @@
         async function fetchStoreConfig() {
             try {
                 const cacheBuster = `${SCRIPT_URL}?t=${new Date().getTime()}`;
-                const response = await fetch(cacheBuster, { 
+                const response = await fetch(cacheBuster, {
                     method: "GET",
                     redirect: "follow"
                 });
@@ -1218,13 +1358,13 @@
                       </div>
                       <div class="item-actions">
                         ${isSoldOut
-                            ? `<span class="out-of-stock-tag">Out of Stock</span>`
-                            : `<div class="qty-controls">
+                        ? `<span class="out-of-stock-tag">Out of Stock</span>`
+                        : `<div class="qty-controls">
                                   <button type="button" class="qty-btn" onclick="modifyQty(${dish.id}, -1)">-</button>
                                   <span class="qty-display" id="qty-${dish.id}">${cart[dish.id]}</span>
                                   <button type="button" class="qty-btn" onclick="modifyQty(${dish.id}, 1)">+</button>
                                </div>`
-                        }
+                    }
                       </div>
                     </div>
                 `;
@@ -1306,7 +1446,7 @@
             document.getElementById("rcpt-name").innerText = name;
             document.getElementById("rcpt-phone").innerText = phone;
             document.getElementById("rcpt-datetime").innerText = `${date} at ${formatTimeTo12Hour(time)}`;
-            
+
             const itemsNode = document.getElementById("rcpt-items");
             itemsNode.innerHTML = "";
             MENU.forEach(dish => {
@@ -1340,7 +1480,7 @@
 
         async function cancelPaymentAndEdit() {
             if (pollTimer) clearInterval(pollTimer);
-            
+
             if (activeOrderId) {
                 fetch(SCRIPT_URL, {
                     method: "POST",
@@ -1355,16 +1495,15 @@
 
             document.getElementById("step-payment").classList.add("hidden");
             document.getElementById("step-review").classList.remove("hidden");
-            
+
             const submitBtn = document.getElementById("submit-btn");
             submitBtn.disabled = false;
             submitBtn.innerText = "Confirm & Place Order";
-            
+
             setTopNotice("hide");
             window.scrollTo(0, 0);
         }
 
-        // Pre-Check Availability Before Placing Order
         async function sendOrder() {
             const submitBtn = document.getElementById("submit-btn");
             submitBtn.disabled = true;
@@ -1410,10 +1549,10 @@
                         return;
                     } else {
                         alert(`⚠️ Non-Availability Notice:\nThe following item(s) just went OUT OF STOCK and were removed from your order:\n• ${unavailableItemNames.join("\n• ")}\n\nYour order summary and total have been updated. Please review before proceeding.`);
-                        
+
                         const itemsNode = document.getElementById("rcpt-items");
                         itemsNode.innerHTML = "";
-                        
+
                         MENU.forEach(dish => {
                             if (cart[dish.id] > 0) {
                                 itemsNode.innerHTML += `
@@ -1467,7 +1606,7 @@
 
                 const confItemsNode = document.getElementById("conf-items");
                 confItemsNode.innerHTML = "";
-                
+
                 const itemsList = [];
                 MENU.forEach(dish => {
                     if (cart[dish.id] > 0) {
@@ -1544,7 +1683,7 @@
 
             pollTimer = setInterval(async () => {
                 try {
-                    const res = await fetch(`${SCRIPT_URL}?checkOrderId=${orderId}&t=${new Date().getTime()}`, { 
+                    const res = await fetch(`${SCRIPT_URL}?checkOrderId=${orderId}&t=${new Date().getTime()}`, {
                         method: "GET",
                         redirect: "follow"
                     });
@@ -1645,7 +1784,6 @@
             }, 4000);
         }
 
-        // Vector PDF Generation (iOS Safari Native Tab Preview & Standard Download)
         function downloadVectorReceiptPdf() {
             try {
                 if (!window.jspdf || !window.jspdf.jsPDF) {
@@ -1686,7 +1824,7 @@
                 // Order Meta Information
                 doc.setFontSize(8.5);
                 doc.setTextColor(33, 37, 41);
-                
+
                 doc.setFont("helvetica", "bold");
                 doc.text("Order ID:", 6, 29);
                 doc.setTextColor(201, 42, 42);
@@ -1724,11 +1862,11 @@
                 data.itemsList.forEach((item) => {
                     const itemLine = `${item.qty}x ${item.name}`;
                     const itemTotal = `₹${item.price * item.qty}`;
-                    
+
                     const splitText = doc.splitTextToSize(itemLine, 50);
                     doc.text(splitText, 6, y);
                     doc.text(itemTotal, 74, y, { align: "right" });
-                    
+
                     y += (splitText.length * 4.5);
                 });
 
@@ -1750,8 +1888,8 @@
                 doc.text("UPI ID: 9000001690@upi", 40, y + 4, { align: "center" });
                 doc.text("Thank you for dining with Yaady's!", 40, y + 8, { align: "center" });
 
-                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-                              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
                 if (isIOS) {
                     const pdfBlob = doc.output('blob');
@@ -1796,6 +1934,7 @@
         adjustPickupTimeDefaults();
         fetchStoreConfig();
         startLiveConfigSync();
+        recordPageView();
     </script>
 </body>
 
