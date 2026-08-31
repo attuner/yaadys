@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Yaady's Millet Roti Meals - Orders</title>
-    <!-- jsPDF for instant client-side vector PDF generation -->
+    <title>Yaady's Millet Roti Meals - Orders & Subscriptions</title>
+    <!-- jsPDF & AutoTable for client-side vector PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
             --primary: #c92a2a;
@@ -43,27 +44,90 @@
             width: 100%;
         }
 
-        /* Persistent Top Brand Header */
+        /* Top Brand Header */
         .global-brand-header {
             background: var(--card);
             border-radius: 12px;
-            padding: 16px 20px;
+            padding: 14px 18px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-            margin-bottom: 14px;
-            text-align: center;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             user-select: none;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .global-brand-title {
             margin: 0;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 800;
             color: #111;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
+            gap: 6px;
             letter-spacing: -0.2px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-btn {
+            border: 1px solid var(--border);
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .auth-status-btn {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .sub-nav-btn {
+            background: #2b8a3e;
+            color: #ffffff;
+            border-color: #2b8a3e;
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        /* Top Active Orders Banner */
+        #active-orders-banner {
+            background: #e7f5ff;
+            border: 1.5px solid #74c0fc;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .active-order-chip {
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-top: 8px;
+            border: 1px solid #d0ebff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
         }
 
         .card {
@@ -75,24 +139,12 @@
         }
 
         @media (min-width: 768px) {
-            .card {
-                padding: 26px;
-            }
-
-            .global-brand-title {
-                font-size: 24px;
-            }
+            .card { padding: 26px; }
+            .global-brand-title { font-size: 22px; }
         }
 
-        h2,
-        h3 {
-            margin-top: 0;
-            color: #111;
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
+        h2, h3 { margin-top: 0; color: #111; }
+        .form-group { margin-bottom: 14px; }
 
         label {
             display: block;
@@ -102,19 +154,19 @@
             color: #495057;
         }
 
-        input {
+        input, select {
             width: 100%;
             padding: 11px;
             border: 1px solid var(--border);
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
             background: #fff;
             color: var(--text);
             appearance: none;
             -webkit-appearance: none;
         }
 
-        input:focus {
+        input:focus, select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(201, 42, 42, 0.15);
@@ -127,9 +179,7 @@
         }
 
         @media (min-width: 540px) {
-            .grid-2 {
-                grid-template-columns: 1fr 1fr;
-            }
+            .grid-2 { grid-template-columns: 1fr 1fr; }
         }
 
         #top-warning-banner {
@@ -141,14 +191,12 @@
             text-align: center;
             margin-bottom: 14px;
             user-select: none;
-            transition: all 0.2s ease;
         }
 
         .banner-warning {
             background: #fff3bf !important;
             color: #7f5f00 !important;
             border: 1px solid #ffe066 !important;
-            cursor: default !important;
         }
 
         .compact-delivery {
@@ -164,18 +212,8 @@
             margin-bottom: 16px;
         }
 
-        .compact-delivery-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #495057;
-        }
-
-        .delivery-icons {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
+        .compact-delivery-title { font-size: 13px; font-weight: 700; color: #495057; }
+        .delivery-icons { display: flex; gap: 8px; flex-wrap: wrap; }
         .app-icon-btn {
             display: inline-flex;
             align-items: center;
@@ -186,26 +224,11 @@
             font-size: 11.5px;
             font-weight: 700;
             color: #fff;
-            transition: opacity 0.2s;
         }
+        .btn-zomato { background: #cb202d; }
+        .btn-swiggy { background: #fc8019; }
+        .btn-toing { background: #2f3640; }
 
-        .app-icon-btn:hover {
-            opacity: 0.88;
-        }
-
-        .btn-zomato {
-            background: #cb202d;
-        }
-
-        .btn-swiggy {
-            background: #fc8019;
-        }
-
-        .btn-toing {
-            background: #2f3640;
-        }
-
-        /* Wrapped Multi-Row Category Tabs */
         .category-tabs {
             display: flex;
             flex-wrap: wrap;
@@ -225,76 +248,36 @@
             font-weight: 700;
             cursor: pointer;
             color: #495057;
-            transition: all 0.2s ease;
             text-align: center;
-            white-space: normal;
-            word-wrap: break-word;
-            line-height: 1.25;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         @media (min-width: 600px) {
-            .cat-btn {
-                flex: 1 1 calc(25% - 8px);
-            }
+            .cat-btn { flex: 1 1 calc(25% - 8px); }
         }
 
-        .cat-plain {
-            border-color: #d97706;
-            color: #b45309;
-        }
+        .cat-plain { border-color: #d97706; color: #b45309; }
+        .cat-plain.active { background: #d97706; color: #fff; }
+        .cat-curries { border-color: #c92a2a; color: #c92a2a; }
+        .cat-curries.active { background: #c92a2a; color: #fff; }
+        .cat-specials { border-color: #059669; color: #059669; }
+        .cat-specials.active { background: #059669; color: #fff; }
+        .cat-meals { border-color: #2563eb; color: #2563eb; }
+        .cat-meals.active { background: #2563eb; color: #fff; }
 
-        .cat-plain.active {
-            background: #d97706;
-            color: #fff;
-        }
-
-        .cat-curries {
-            border-color: #c92a2a;
-            color: #c92a2a;
-        }
-
-        .cat-curries.active {
-            background: #c92a2a;
-            color: #fff;
-        }
-
-        .cat-specials {
-            border-color: #059669;
-            color: #059669;
-        }
-
-        .cat-specials.active {
-            background: #059669;
-            color: #fff;
-        }
-
-        .cat-meals {
-            border-color: #2563eb;
-            color: #2563eb;
-        }
-
-        .cat-meals.active {
-            background: #2563eb;
-            color: #fff;
-        }
-
-        #menu-list {
+        #menu-list, #sub-plans-list {
             display: grid;
             grid-template-columns: 1fr;
             gap: 14px;
         }
 
         @media (min-width: 640px) {
-            #menu-list {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 16px;
-            }
+            #menu-list, #sub-plans-list { grid-template-columns: repeat(2, 1fr); gap: 16px; }
         }
 
-        .menu-item {
+        .menu-item, .sub-plan-card {
             display: flex;
             flex-direction: column;
             border: 1px solid var(--border);
@@ -304,6 +287,22 @@
             height: 100%;
         }
 
+        .sub-plan-card { border: 2px solid #b2f2bb; }
+        .sub-plan-card.monthly { border-color: #a5d8ff; }
+
+        .sub-badge {
+            background: #2b8a3e;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .sub-badge.monthly { background: #1971c2; }
+
         .menu-item img {
             width: 100%;
             height: 175px;
@@ -312,7 +311,7 @@
         }
 
         .item-body {
-            padding: 12px 14px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
@@ -326,42 +325,12 @@
             margin-bottom: 6px;
         }
 
-        .item-name {
-            font-weight: 700;
-            font-size: 15px;
-            color: #111;
-            line-height: 1.35;
-            padding-right: 8px;
-        }
+        .item-name { font-weight: 700; font-size: 15px; color: #111; line-height: 1.35; }
+        .item-price { font-weight: 700; color: var(--primary); font-size: 16px; white-space: nowrap; }
+        .item-desc { font-size: 12.5px; color: #6c757d; margin-bottom: 12px; line-height: 1.4; }
+        .item-actions { display: flex; justify-content: flex-end; align-items: center; min-height: 36px; margin-top: auto; }
 
-        .item-price {
-            font-weight: 700;
-            color: var(--primary);
-            font-size: 16px;
-            white-space: nowrap;
-        }
-
-        .item-desc {
-            font-size: 12.5px;
-            color: #6c757d;
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-
-        .item-actions {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            min-height: 36px;
-            margin-top: auto;
-        }
-
-        .qty-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
+        .qty-controls { display: flex; align-items: center; gap: 10px; }
         .qty-btn {
             width: 34px;
             height: 34px;
@@ -376,32 +345,19 @@
             justify-content: center;
         }
 
-        .qty-display {
-            width: 24px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 15px;
-        }
+        .qty-display { width: 24px; text-align: center; font-weight: bold; font-size: 15px; }
 
         .spinner {
             border: 4px solid #f3f3f3;
             border-top: 4px solid var(--primary);
             border-radius: 50%;
-            width: 38px;
-            height: 38px;
+            width: 34px;
+            height: 34px;
             animation: spin 1s linear infinite;
             margin: 14px auto;
         }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         .live-status-pill {
             display: inline-flex;
@@ -414,45 +370,12 @@
             margin-bottom: 12px;
         }
 
-        .status-preparing {
-            background: #fff3bf;
-            color: #b08800;
-            border: 1px solid #ffe066;
-        }
+        .status-preparing { background: #fff3bf; color: #b08800; border: 1px solid #ffe066; }
+        .status-ready { background: #d3f9d8; color: #2b8a3e; border: 1px solid #b2f2bb; animation: pulse 1.5s infinite; }
+        .status-picked { background: #e7f5ff; color: #1971c2; border: 1px solid #a5d8ff; }
 
-        .status-ready {
-            background: #d3f9d8;
-            color: #2b8a3e;
-            border: 1px solid #b2f2bb;
-            animation: pulse 1.5s infinite;
-        }
-
-        .status-picked {
-            background: #e7f5ff;
-            color: #1971c2;
-            border: 1px solid #a5d8ff;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.03);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .pulse-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: currentColor;
-        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+        .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
 
         .prep-progress-card {
             background: #fdfdfd;
@@ -460,7 +383,6 @@
             border-radius: 12px;
             padding: 18px 16px;
             margin: 16px 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
             text-align: left;
         }
 
@@ -480,34 +402,18 @@
             background-color: #e9ecef;
             border-radius: 20px;
             overflow: hidden;
-            position: relative;
         }
 
         .progress-bar-fill {
             width: 100%;
             height: 100%;
             border-radius: 20px;
-            background: linear-gradient(45deg,
-                    #c92a2a 25%,
-                    #f03e3e 25%,
-                    #f03e3e 50%,
-                    #c92a2a 50%,
-                    #c92a2a 75%,
-                    #f03e3e 75%,
-                    #f03e3e 100%);
+            background: linear-gradient(45deg, #c92a2a 25%, #f03e3e 25%, #f03e3e 50%, #c92a2a 50%, #c92a2a 75%, #f03e3e 75%, #f03e3e 100%);
             background-size: 28px 28px;
             animation: moveStripes 1.2s linear infinite;
         }
 
-        @keyframes moveStripes {
-            0% {
-                background-position: 0 0;
-            }
-
-            100% {
-                background-position: 28px 0;
-            }
-        }
+        @keyframes moveStripes { 0% { background-position: 0 0; } 100% { background-position: 28px 0; } }
 
         .progress-footer {
             display: flex;
@@ -518,45 +424,18 @@
             margin-top: 8px;
         }
 
-        .ready-food-box {
-            background: #ebfbee;
-            border: 2px solid #51cf66;
+        .ready-food-box, .pickedup-box {
             border-radius: 12px;
             padding: 20px;
             margin: 14px 0;
             text-align: center;
-            animation: bounceIn 0.7s ease;
         }
-
-        .pickedup-box {
-            background: #e7f5ff;
-            border: 2px solid #339af0;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 14px 0;
-            text-align: center;
-            animation: bounceIn 0.7s ease;
-        }
-
-        @keyframes bounceIn {
-            0% {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-
-            60% {
-                transform: scale(1.02);
-                opacity: 1;
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
+        .ready-food-box { background: #ebfbee; border: 2px solid #51cf66; }
+        .pickedup-box { background: #e7f5ff; border: 2px solid #339af0; }
 
         .packed-bag-icon {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             margin: 0 auto 10px auto;
             display: flex;
             align-items: center;
@@ -578,17 +457,12 @@
             font-weight: 700;
             cursor: pointer;
             text-align: center;
-            transition: background 0.2s;
         }
 
-        .btn:hover {
-            background: var(--primary-hover);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            margin-top: 8px;
-        }
+        .btn:hover { background: var(--primary-hover); }
+        .btn-secondary { background: #6c757d; margin-top: 8px; }
+        .btn-green { background: #2b8a3e; }
+        .btn-green:hover { background: #237032; }
 
         .btn-upi-pay {
             background: #5c7cfa;
@@ -603,10 +477,6 @@
             font-weight: 700;
             font-size: 15px;
             margin-top: 10px;
-        }
-
-        .btn-upi-pay:hover {
-            background: #4263eb;
         }
 
         .btn-whatsapp {
@@ -624,35 +494,9 @@
             font-size: 14px;
         }
 
-        .btn-whatsapp:hover {
-            background: #1eb956;
-        }
-
-        .btn-download {
-            background: #1971c2;
-            margin-top: 10px;
-        }
-
-        .btn-download:hover {
-            background: #1864ab;
-        }
-
-        .btn-notify-perm {
-            background: #20c997;
-            color: #fff;
-            margin-top: 8px;
-            font-size: 13px;
-            padding: 10px;
-        }
-
-        .btn-notify-perm:hover {
-            background: #12b886;
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+        .btn-download { background: #1971c2; margin-top: 10px; }
+        .btn-download:hover { background: #1864ab; }
+        .btn-notify-perm { background: #20c997; color: #fff; margin-top: 8px; font-size: 13px; padding: 10px; }
 
         #live-order-bar {
             position: fixed;
@@ -679,12 +523,7 @@
             align-items: center;
         }
 
-        .live-total {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffd43b;
-        }
-
+        .live-total { font-size: 18px; font-weight: bold; color: #ffd43b; }
         .live-btn {
             background: var(--primary);
             color: white;
@@ -696,17 +535,7 @@
             font-size: 14px;
         }
 
-        #live-drawer {
-            background: #fdfdfd;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 15px;
-            font-size: 13px;
-        }
-
-        #receipt-target,
-        #savable-receipt {
+        #receipt-target, #savable-receipt {
             background: #ffffff;
             color: #000000;
             padding: 20px;
@@ -747,12 +576,6 @@
             text-align: center;
         }
 
-        .qr-link-wrapper {
-            display: inline-block;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
         .qr-container {
             margin: 10px auto;
             width: 170px;
@@ -764,19 +587,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s, border-color 0.2s;
         }
 
-        .qr-container:hover {
-            transform: scale(1.02);
-            border-color: var(--primary);
-        }
-
-        .qr-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
+        .qr-container img { width: 100%; height: 100%; object-fit: contain; }
 
         .upi-badge {
             display: inline-flex;
@@ -801,18 +614,7 @@
             font-weight: 700;
         }
 
-        .hidden {
-            display: none !important;
-        }
-
-        .info-banner {
-            background: #fff3cd;
-            color: #856404;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 13px;
-            margin-bottom: 14px;
-        }
+        .hidden { display: none !important; }
 
         .closed-banner {
             background: #ffc9c9;
@@ -835,8 +637,54 @@
             text-transform: uppercase;
         }
 
-        .menu-item.disabled {
-            opacity: 0.55;
+        .menu-item.disabled { opacity: 0.55; }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.65);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 16px;
+        }
+
+        .modal-card {
+            background: #fff;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 12px;
+            padding: 22px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .status-badge-live {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .status-badge-pending { background: #fff3bf; color: #a67c00; }
+        .status-badge-ready { background: #d3f9d8; color: #2b8a3e; }
+        .status-badge-picked { background: #dbe4ff; color: #2563eb; }
+        .status-badge-cancelled { background: #ffe3e3; color: #e03131; }
+
+        .sub-progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 10px;
+            width: 100%;
+            overflow: hidden;
+            margin: 6px 0;
+        }
+        .sub-progress-fill {
+            background: #2b8a3e;
+            height: 100%;
+            border-radius: 10px;
         }
     </style>
 </head>
@@ -844,14 +692,118 @@
 <body>
 
     <div class="container">
-        <!-- Universal Brand Header (Visible Across All Pages) -->
+        <!-- Brand Header -->
         <header class="global-brand-header">
             <h1 class="global-brand-title">
                 <span>🌾</span> Yaady's Millet Roti Meals
             </h1>
+            <div class="header-actions">
+                <button type="button" class="header-btn sub-nav-btn" onclick="openSubscriptionsModal()">🎁 Subscriptions</button>
+                <button type="button" id="auth-nav-btn" class="header-btn auth-status-btn" onclick="openAuthModal()">🔑 Login / Register</button>
+            </div>
         </header>
 
         <div id="top-warning-banner"></div>
+
+        <!-- Dynamic Active Pickups & Subscriptions Banner -->
+        <div id="active-orders-banner" class="hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <strong style="color:#1971c2; font-size:13.5px;">📋 Your Active Pickups & Subscriptions</strong>
+                <span style="font-size:11.5px; color:#6c757d;">Live Status</span>
+            </div>
+            <div id="active-orders-list"></div>
+        </div>
+
+        <!-- Subscriptions Modal -->
+        <div id="subscriptions-modal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <h3 style="margin:0; font-size: 19px; color: #2b8a3e;">🎁 Daily Meal Subscriptions</h3>
+                    <button type="button" class="qty-btn" onclick="closeSubscriptionsModal()">✕</button>
+                </div>
+                <p style="font-size:13px; color:#6c757d; margin-top:0; margin-bottom:12px;">
+                    Fresh daily homestyle cooking prepared day-wise for your preferred pickup time slot.
+                </p>
+
+                <div style="background: #f8f9fa; border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 14px;">
+                    <div class="grid-2">
+                        <div class="form-group" style="margin-bottom:6px;">
+                            <label>Subscription Start Date *</label>
+                            <input type="date" id="sub-start-date" onchange="adjustSubPickupTimeConstraints()" required />
+                        </div>
+                        <div class="form-group" style="margin-bottom:6px;">
+                            <label>Daily Preferred Pickup Time * (Min 30 mins)</label>
+                            <input type="time" id="sub-daily-time" onchange="validateSubTimeNotPast()" required />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category-tabs" style="margin-top:0;">
+                    <button type="button" class="cat-btn cat-specials active" id="btn-sub-weekly" onclick="filterSubTab('Weekly', this)">Weekly (6 Days • 10% OFF)</button>
+                    <button type="button" class="cat-btn cat-meals" id="btn-sub-monthly" onclick="filterSubTab('Monthly', this)">Monthly (24 Days • 15% OFF)</button>
+                </div>
+
+                <div id="sub-plans-list">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auth Modal -->
+        <div id="auth-modal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <h3 id="auth-modal-title" style="margin:0;">Customer Login</h3>
+                    <button type="button" class="qty-btn" onclick="closeAuthModal()">✕</button>
+                </div>
+                
+                <div id="login-fields">
+                    <div class="form-group">
+                        <label>Registered Mobile Number</label>
+                        <input type="tel" id="auth-login-phone" maxlength="10" placeholder="10-digit mobile number" />
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="auth-login-pass" placeholder="Enter your password" />
+                    </div>
+                    <button type="button" class="btn" onclick="submitLogin()">Log In</button>
+                    <p style="font-size:12.5px; text-align:center; margin-top:12px; color:#6c757d;">
+                        New customer? <a href="#" onclick="toggleAuthMode('register'); return false;">Register here</a>
+                    </p>
+                </div>
+
+                <div id="register-fields" class="hidden">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="auth-reg-name" placeholder="e.g. Rahul" />
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile Number *</label>
+                        <input type="tel" id="auth-reg-phone" maxlength="10" placeholder="10-digit mobile number" />
+                    </div>
+                    <div class="form-group">
+                        <label>Create Unique Password *</label>
+                        <input type="password" id="auth-reg-pass" placeholder="Create a password" />
+                    </div>
+                    <button type="button" class="btn" onclick="submitRegister()">Create Account</button>
+                    <p style="font-size:12.5px; text-align:center; margin-top:12px; color:#6c757d;">
+                        Already registered? <a href="#" onclick="toggleAuthMode('login'); return false;">Log In</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order & Subscriptions History Modal -->
+        <div id="history-modal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <h3 style="margin:0;">My Orders & Subscriptions</h3>
+                    <button type="button" class="qty-btn" onclick="closeHistoryModal()">✕</button>
+                </div>
+                <div id="history-content-list" style="font-size: 13px;">Loading...</div>
+                <button type="button" class="btn btn-secondary" onclick="logoutCustomer()" style="margin-top:14px;">Logout</button>
+            </div>
+        </div>
 
         <!-- 1. Order Input View -->
         <div id="step-order" class="card">
@@ -869,12 +821,8 @@
 
             <p style="margin-top:0; font-size:13.5px; color:#6c757d; line-height: 1.5; text-align: justify;">
                 Yaady’s is a home-based cloud kitchen dedicated to millet-based rotis and wholesome meals, inspired by
-                the traditional foods that have been enjoyed for generations. We see millets as “health tuners” and our
-                vision is to bring original traditional foods back to the plate, staying true to their authentic
-                flavors. We strive to preserve its essence while making it accessible for today’s lifestyle. Every meal
-                at Yaady’s is prepared fresh only after your order is received. We currently offer takeaway pickup
-                orders only. Get directions to <a href="https://maps.app.goo.gl/3vTmmsbHN5kg98qF6" target="_blank"
-                    rel="noopener noreferrer">Yaady's</a> at Neknampur, Manikonda, Hyderabad.
+                the traditional foods that have been enjoyed for generations. Every meal at Yaady’s is prepared fresh only after your order is received. We currently offer takeaway pickup orders only. Get directions to <a href="https://maps.app.goo.gl/3vTmmsbHN5kg98qF6" target="_blank"
+                    rel="noopener noreferrer">Yaady's</a> at Manikonda, Hyderabad.
                 <br><br><strong>Yaady’s — The Traditional Health Tuner.</strong>
             </p>
             <div id="closed-message" class="hidden"></div>
@@ -897,13 +845,12 @@
                         <input type="date" id="pickup-date" onchange="adjustPickupTimeDefaults()" required />
                     </div>
                     <div class="form-group">
-                        <label>Pickup Time * (Min 30 mins)</label>
-                        <input type="time" id="pickup-time" required />
+                        <label>Pickup Time * (Min 30 mins from now)</label>
+                        <input type="time" id="pickup-time" onchange="validatePickupTimeNotPast()" required />
                     </div>
                 </div>
 
                 <h3 style="margin-top: 22px; margin-bottom: 8px;">Select Dishes</h3>
-                <!-- Multi-Row Wrapped Category Tabs -->
                 <div class="category-tabs" id="cat-nav">
                     <button type="button" class="cat-btn cat-plain active"
                         onclick="filterCategory('Plain Rotis', this)">Plain Rotis</button>
@@ -917,7 +864,7 @@
 
                 <div id="menu-list"></div>
 
-                <div id="live-drawer">
+                <div id="live-drawer" style="background: #fdfdfd; border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-top: 15px; font-size: 13px;">
                     <strong style="display:block; margin-bottom:6px;">Live Order Summary:</strong>
                     <div id="live-items-list" style="color: #6c757d;">No items selected yet.</div>
                 </div>
@@ -926,8 +873,8 @@
 
         <!-- 2. Review View -->
         <div id="step-review" class="card hidden">
-            <h2>Review Your Order</h2>
-            <div class="info-banner">Please review your items. Next step: Make UPI payment to confirm your order.</div>
+            <h2 id="review-title">Review Your Order</h2>
+            <div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 14px;">Please review your items. Next step: Make UPI payment to confirm your order.</div>
 
             <div id="receipt-target">
                 <div class="receipt-header">
@@ -936,12 +883,12 @@
                 </div>
                 <div class="receipt-line"><strong>Name:</strong> <span id="rcpt-name"></span></div>
                 <div class="receipt-line"><strong>Mobile:</strong> <span id="rcpt-phone"></span></div>
-                <div class="receipt-line"><strong>Pickup:</strong> <span id="rcpt-datetime"></span></div>
+                <div class="receipt-line"><strong>Pickup / Plan:</strong> <span id="rcpt-datetime"></span></div>
                 <hr style="border: 0; border-top: 1px dashed #ced4da; margin: 8px 0;" />
                 <div id="rcpt-items"></div>
                 <div class="receipt-line receipt-total">
                     <span>Total Payable:</span>
-                    <span>₹<span id="rcpt-total">0</span></span>
+                    <span>Rs. <span id="rcpt-total">0</span></span>
                 </div>
             </div>
 
@@ -952,25 +899,21 @@
         <!-- 3. Direct Payment Screen -->
         <div id="step-payment" class="card hidden" style="text-align: center;">
             <h2 style="color: #2b8a3e;">Complete Payment to Place Order</h2>
-            <p style="color: #495057; font-size: 14px;">Please complete the UPI payment below. Once verified, your order
-                will be accepted.</p>
+            <p style="color: #495057; font-size: 14px;">Please complete the UPI payment below. Once verified, your order will be accepted.</p>
 
             <div class="payment-box">
-                <div style="font-size: 13px; color: #6c757d; margin-bottom: 4px;">Order ID: <strong id="pay-order-id"
-                        style="color: var(--primary);"></strong></div>
-                <h3 style="margin: 0; font-size: 20px;">Pay Amount: <span id="pay-amount-display"
-                        style="color: var(--primary);"></span></h3>
+                <div style="font-size: 13px; color: #6c757d; margin-bottom: 4px;">Order / Sub ID: <strong id="pay-order-id" style="color: var(--primary);"></strong></div>
+                <h3 style="margin: 0; font-size: 20px;">Pay Amount: <span id="pay-amount-display" style="color: var(--primary);"></span></h3>
 
-                <a id="upi-qr-link" href="#" class="qr-link-wrapper" title="Click to Pay directly with UPI app">
+                <a id="upi-qr-link" href="#" style="display:inline-block; text-decoration:none;" title="Click to Pay directly with UPI app">
                     <div class="qr-container">
                         <img id="upi-qr-image" src="" alt="UPI QR Code - Click to Pay" />
                     </div>
                 </a>
-                <div style="font-size: 12px; color: #1971c2; font-weight: 600; margin-bottom: 8px;">👆 Tap QR code or
-                    button below to launch UPI App</div>
+                <div style="font-size: 12px; color: #1971c2; font-weight: 600; margin-bottom: 8px;">👆 Tap QR code or button below to launch UPI App</div>
 
                 <a id="direct-upi-btn" href="#" class="btn-upi-pay">
-                    ⚡ Pay ₹<span id="btn-pay-amount">0</span> via UPI App
+                    ⚡ Pay Rs. <span id="btn-pay-amount">0</span> via UPI App
                 </a>
 
                 <div style="margin-top: 10px;">
@@ -979,30 +922,25 @@
                         <button type="button" class="copy-btn" onclick="copyUpiId()">Copy</button>
                     </span>
                 </div>
-                <p style="font-size: 11px; color: #6c757d; margin-top: 8px; margin-bottom: 0;">Order ID auto-filled in
-                    remarks: <strong id="remarks-id-preview"></strong></p>
+                <p style="font-size: 11px; color: #6c757d; margin-top: 8px; margin-bottom: 0;">Order ID auto-filled in remarks: <strong id="remarks-id-preview"></strong></p>
             </div>
 
             <a id="wa-contact-btn" href="#" target="_blank" class="btn-whatsapp">
-                💬 Have a query? or CLICK HERE to request confirmation via WhatsApp.
+                💬 Have a query? CLICK HERE to request confirmation via WhatsApp.
             </a>
 
             <button type="button" class="btn btn-secondary" onclick="cancelPaymentAndEdit()">
-                ↩ Cancel / Edit Order <br> [Please do not cancel once you have made the payment.]
+                ↩ Cancel / Edit Order <br> [Please do not cancel once payment is sent]
             </button>
 
-            <button type="button" id="btn-enable-notify" class="btn btn-notify-perm"
-                onclick="requestNotificationPermission()">
-                🔔 Enable Instant Status Notifications on this Device
+            <button type="button" id="btn-enable-notify" class="btn btn-notify-perm" onclick="requestNotificationPermission()">
+                🔔 Enable Instant Status Notifications
             </button>
 
-            <div
-                style="margin-top: 16px; padding: 12px; background: #e7f5ff; border-radius: 8px; border: 1px solid #d0ebff;">
+            <div style="margin-top: 16px; padding: 12px; background: #e7f5ff; border-radius: 8px; border: 1px solid #d0ebff;">
                 <div class="spinner"></div>
-                <div style="font-size: 13px; color: #1971c2; font-weight: 600;">Waiting for kitchen to confirm your
-                    payment...</div>
-                <div style="font-size: 11px; color: #6c757d; margin-top: 4px;">This page will automatically update once
-                    accepted.</div>
+                <div style="font-size: 13px; color: #1971c2; font-weight: 600;">Waiting for kitchen to confirm payment...</div>
+                <div style="font-size: 11px; color: #6c757d; margin-top: 4px;">This page updates automatically upon acceptance.</div>
             </div>
         </div>
 
@@ -1011,67 +949,56 @@
             <div id="success-icon" style="font-size: 48px; color: #2b8a3e; margin-bottom: 4px;">✓</div>
 
             <div id="order-status-badge" class="live-status-pill status-preparing">
-                <span class="pulse-dot"> </span>
+                <span class="pulse-dot"></span>
                 <span id="order-status-text">Preparing Your Order</span>
             </div>
 
             <div id="prep-progress-container" class="prep-progress-card">
                 <div class="progress-header">
                     <span>🍳 Kitchen Preparation in Progress</span>
-                    <span style="color: var(--primary);">Freshly Cooking</span>
+                    <span style="color: var(--primary);">Active Request</span>
                 </div>
                 <div class="progress-bar-track">
                     <div class="progress-bar-fill"></div>
                 </div>
                 <div class="progress-footer">
                     <span>Authentic homestyle cooking</span>
-                    <span>Ready by requested time</span>
+                    <span>Ready by requested slot</span>
                 </div>
             </div>
 
             <div id="ready-food-box" class="ready-food-box hidden">
                 <div class="packed-bag-icon">
-                    <span style="font-size: 44px;">🛍️</span>
+                    <span style="font-size: 40px;">🛍️</span>
                 </div>
-                <h3 style="color: #2b8a3e; margin: 0 0 6px 0; font-size: 18px;">Your Meal is Packed & Ready for Pickup!
-                </h3>
-                <p style="font-size: 13px; color: #495057; margin: 0;">Please show your <strong>Order ID</strong> at the
-                    counter to collect your meal. Get directions to <a href='https://maps.app.goo.gl/3vTmmsbHN5kg98qF6'
-                        target='_blank' rel='noopener noreferrer'>Yaady's.</a></p>
+                <h3 style="color: #2b8a3e; margin: 0 0 6px 0; font-size: 18px;">Your Meal is Packed & Ready for Pickup!</h3>
+                <p style="font-size: 13px; color: #495057; margin: 0;">Please show your <strong>Order ID</strong> at the counter to collect your meal.</p>
             </div>
 
             <div id="picked-up-box" class="pickedup-box hidden">
-                <div class="packed-bag-icon" style="box-shadow: 0 4px 10px rgba(51, 154, 240, 0.2);">
-                    <span style="font-size: 44px;">🌾</span>
+                <div class="packed-bag-icon">
+                    <span style="font-size: 40px;">🌾</span>
                 </div>
-                <h3 style="color: #1971c2; margin: 0 0 6px 0; font-size: 18px;">Order Successfully Picked Up!</h3>
-                <p style="font-size: 13px; color: #495057; margin: 0;">Thank you! We hope you enjoy your wholesome
-                    millet meal. Have a wonderful day!</p>
+                <h3 style="color: #1971c2; margin: 0 0 6px 0; font-size: 18px;">Order Successfully Completed!</h3>
+                <p style="font-size: 13px; color: #495057; margin: 0;">Thank you for dining with Yaady's!</p>
             </div>
 
-            <h3 id="success-heading" style="margin-bottom: 6px; font-size: 16px;">To view the live order status, please
-                keep this page open and avoid refreshing or closing it.</h3>
-            <p id="success-subtext" style="color: #495057; font-size: 14px; line-height: 1.5; margin-bottom: 16px;">
-                Please head over to <a href="https://maps.app.goo.gl/3vTmmsbHN5kg98qF6" target="_blank"
-                    rel="noopener noreferrer">Yaady's</a> for pickup.
-            </p>
+            <h3 id="success-heading" style="margin-bottom: 6px; font-size: 15px;">Live status updates on this screen automatically.</h3>
 
             <a id="wa-followup-btn" href="#" target="_blank" class="btn-whatsapp" style="margin-bottom: 16px;">
                 💬 Have a query? Contact us on WhatsApp.
             </a>
 
-            <h3 style="margin-top: 16px; margin-bottom: 8px; text-align: left;">Download Order Details</h3>
             <div id="savable-receipt">
                 <div class="receipt-header">
                     <h3 style="margin:0;">YAADY'S MILLET ROTI MEALS</h3>
                     <span style="font-size: 11px; color: #555;">CONFIRMED TAKEAWAY RECEIPT</span>
                 </div>
-                <div class="receipt-line"><strong>Order ID:</strong> <span id="conf-id"></span></div>
+                <div class="receipt-line"><strong>ID:</strong> <span id="conf-id"></span></div>
                 <div class="receipt-line"><strong>Customer:</strong> <span id="conf-name"></span></div>
                 <div class="receipt-line"><strong>Mobile:</strong> <span id="conf-phone"></span></div>
-                <div class="receipt-line"><strong>Pickup Slot:</strong> <span id="conf-slot"></span></div>
-                <div class="receipt-line"><strong>Current Status:</strong> <strong id="conf-status-label"
-                        style="color: #e67700;">PREPARING</strong></div>
+                <div class="receipt-line"><strong>Schedule:</strong> <span id="conf-slot"></span></div>
+                <div class="receipt-line"><strong>Current Status:</strong> <strong id="conf-status-label" style="color: #e67700;">PREPARING</strong></div>
                 <hr style="border: 0; border-top: 1px dashed #ced4da; margin: 8px 0;" />
                 <div id="conf-items"></div>
                 <div class="receipt-line receipt-total">
@@ -1080,26 +1007,21 @@
                 </div>
             </div>
 
-            <!-- Vector PDF Download Button -->
-            <button type="button" class="btn btn-download" onclick="downloadVectorReceiptPdf()">📄 Download PDF
-                Receipt</button>
-            <button type="button" class="btn btn-secondary" onclick="window.open(window.location.href, '_blank')">Place
-                Another Order</button>
+            <button type="button" class="btn btn-download" onclick="downloadVectorReceiptPdf(lastConfirmedOrderData)">📄 Download PDF Receipt</button>
+            <button type="button" class="btn btn-secondary" onclick="location.reload()">Place Another Order</button>
         </div>
 
         <!-- 5. Rejected Screen -->
         <div id="step-rejected" class="card hidden" style="text-align: center;">
             <div style="font-size: 48px; color: #c92a2a; margin-bottom: 8px;">✕</div>
             <h2>Order Could Not Be Accepted</h2>
-            <p id="rejected-status-message" style="color: #495057;">The kitchen is currently overloaded or items are
-                unavailable. Please try again later or order via Swiggy / Zomato.</p>
+            <p id="rejected-status-message" style="color: #495057;">The kitchen is currently overloaded or items are unavailable. Please try again later.</p>
 
             <a id="wa-rejected-btn" href="#" target="_blank" class="btn-whatsapp" style="margin-bottom: 12px;">
                 💬 Contact Restaurant on WhatsApp
             </a>
 
-            <button type="button" class="btn" onclick="window.open(window.location.href, '_blank')">Place Another
-                Order</button>
+            <button type="button" class="btn" onclick="location.reload()">Place Another Order</button>
         </div>
     </div>
 
@@ -1107,15 +1029,14 @@
     <div id="live-order-bar" class="hidden">
         <div class="live-bar-container">
             <div>
-                <span id="bar-items-count">0 items</span> | <span class="live-total">₹<span
-                        id="bar-total">0</span></span>
+                <span id="bar-items-count">0 items</span> | <span class="live-total">Rs. <span id="bar-total">0</span></span>
             </div>
             <button type="button" class="live-btn" onclick="renderReview()">Review Order →</button>
         </div>
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby746CKA4eNkpHZ6tLnreOj9rja4Y89ouNisTni8mNQUHs1yKF7gAe0EZmV7RGYC51D/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxZkAm-neWdPhGWTvnduNgU9fwBsSe5zMB9g1SaVb_6ELKoGHIU0MZlEiEH4lg_vX-MWQ/exec";
         const RESTAURANT_WHATSAPP = "919000001690";
         const RESTAURANT_UPI_ID = "9000001690@upi";
 
@@ -1126,20 +1047,20 @@
             { id: 4, category: "Plain Rotis", name: "Bajra Rotis [2 Pcs]", price: 45, desc: "2 Pieces of Soft & Fresh Bajra Rotis", img: "images/Bajra-rotis.jpg" },
             { id: 5, category: "Plain Rotis", name: "Chapatis [2 Pcs]", price: 45, desc: "2 Pieces of Soft & Fresh Chapatis", img: "images/chapatis-2-pcs.jpg" },
             { id: 6, category: "Rotis & Curries", name: "Millet Rotis [3 Pcs] [1 Jowar, 1 Raagi & 1 Bajra] with Chicken Curry", price: 300, desc: "3 Pieces of Soft & Fresh Millet Rotis [1 Jowar, 1 Raagi & 1 Bajra] served with Chicken Curry [400 Gm] [Medium Spicy]", img: "images/millet-rotis-3-pcs-1-jowar-1-raagi-1-bajra-with-chicken-curry.jpg" },
-            { id: 7, category: "Rotis & Curries", name: "Jowar Mini Rotis [5 Pcs] with Vegetables Chutney", price: 65, desc: "5 Pieces of Soft & Fresh Mini Sized Jowar Rotis (Tiffin Box Sized Rotis) served with Vegetables Chutney", img: "images/jowar-mini-rotis-5-pcs-with-vegetables-chutney.jpg" },
-            { id: 8, category: "Rotis & Curries", name: "Raagi Mini Rotis [5 Pcs] with Vegetables Chutney", price: 65, desc: "5 Pieces of Soft & Fresh Mini Sized Raagi Rotis (Tiffin Box Sized Rotis) served with Vegetables Chutney", img: "images/raagi-mini-rotis-5-pcs-with-vegetables-chutney.jpg" },
-            { id: 9, category: "Rotis & Curries", name: "Bajra Mini Rotis [5 Pcs] with Vegetables Chutney", price: 65, desc: "5 Pieces of Soft & Fresh Mini Sized Bajra Rotis (Tiffin Box Sized Rotis) served with Vegetables Chutney", img: "images/bajra-mini-rotis-5-pcs-with-vegetables-chutney.jpg" },
+            { id: 7, category: "Rotis & Curries", name: "Jowar Mini Rotis [5 Pcs] with Vegetables Chutney", price: 65, desc: "5 Pieces of Soft & Fresh Mini Sized Jowar Rotis served with Vegetables Chutney", img: "images/jowar-mini-rotis-5-pcs-with-vegetables-chutney.jpg" },
+            { id: 8, category: "Rotis & Curries", name: "Raagi Mini Rotis [5 Pcs] with Vegetables Chutney", price: 65, desc: "5 Pieces of Soft & Fresh Mini Sized Raagi Rotis served with Vegetables Chutney", img: "images/raagi-mini-rotis-5-pcs-with-vegetables-chutney.jpg" },
+            { id: 9, category: "Rotis & Curries", name: "Bajra Mini Rotis [5 Pcs] with Vegetables Chutney", price: 65, desc: "5 Pieces of Soft & Fresh Mini Sized Bajra Rotis served with Vegetables Chutney", img: "images/bajra-mini-rotis-5-pcs-with-vegetables-chutney.jpg" },
             { id: 10, category: "Rotis & Curries", name: "Jowar Rotis [2 Pcs] with Dal Tadka", price: 95, desc: "2 Pieces of Soft & Fresh Jowar Rotis served with Dal Tadka", img: "images/jowar-rotis-2-pcs-with-dal-tadka.jpg" },
             { id: 11, category: "Rotis & Curries", name: "Raagi Rotis [2 Pcs] with Dal Tadka", price: 95, desc: "2 Pieces of Soft & Fresh Raagi Rotis served with Dal Tadka", img: "images/raagi-rotis-2-pcs-with-dal-tadka.jpg" },
             { id: 12, category: "Rotis & Curries", name: "Bajra Rotis [2 Pcs] with Dal Tadka", price: 95, desc: "2 Pieces of Soft & Fresh Bajra Rotis served with Dal Tadka", img: "images/bajra-rotis-2-pcs-with-dal-tadka.jpg" },
             { id: 13, category: "Rotis & Curries", name: "Chapatis [2 Pcs] with Dal Tadka", price: 95, desc: "2 Pieces of Soft & Fresh Chapatis served with Dal Tadka", img: "images/chapatis-2-pcs-with-dal-tadka.jpg" },
-            { id: 14, category: "Rotis & Curries", name: "Jowar Mini Rotis [5 Pcs] with Khaari Chicken Curry [150 Gm]", price: 150, desc: "5 Pieces of Soft & Fresh Mini Sized Jowar Rotis (Tiffin Box Sized Rotis) served with Khaari Chicken Curry [150 Gm] [Non-Spicy]", img: "images/jowar-mini-rotis-5-pcs-with-khaari-chicken-curry-150-gm.jpg" },
-            { id: 15, category: "Rotis & Curries", name: "Raagi Mini Rotis [5 Pcs] with Khaari Chicken Curry [150 Gm]", price: 150, desc: "5 Pieces of Soft & Fresh Mini Sized Raagi Rotis (Tiffin Box Sized Rotis) served with Khaari Chicken Curry [150 Gm] [Non-Spicy]", img: "images/raagi-mini-rotis-5-pcs-with-khaari-chicken-curry-150-gm.jpg" },
-            { id: 16, category: "Rotis & Curries", name: "Bajra Mini Rotis [5 Pcs] with Khaari Chicken Curry [150 Gm]", price: 150, desc: "5 Pieces of Soft & Fresh Mini Sized Bajra Rotis (Tiffin Box Sized Rotis) served with Khaari Chicken Curry [150 Gm] [Non-Spicy]", img: "images/bajra-mini-rotis-5-pcs-with-khaari-chicken-curry-150-gm.jpg" },
-            { id: 17, category: "Rotis & Curries", name: "Jowar Rotis [2 Pcs] with Chicken Curry [300 Gm]", price: 200, desc: "2 Pieces of Soft & Fresh Jowar Rotis served with Chicken Curry [300 Gm] [Medium Spicy]", img: "images/jowar-rotis-2-pcs-with-chicken-curry-300-gm.jpg" },
-            { id: 18, category: "Rotis & Curries", name: "Raagi Rotis [2 Pcs] with Chicken Curry [300 Gm]", price: 200, desc: "2 Pieces of Soft & Fresh Raagi Rotis served with Chicken Curry [300 Gm] [Medium Spicy]", img: "images/raagi-rotis-2-pcs-with-chicken-curry-300-gm.jpg" },
-            { id: 19, category: "Rotis & Curries", name: "Bajra Rotis [2 Pcs] with Chicken Curry [300 Gm]", price: 200, desc: "2 Pieces of Soft & Fresh Bajra Rotis served with Chicken Curry [300 Gm] [Medium Spicy]", img: "images/bajra-rotis-2-pcs-with-chicken-curry-300-gm.jpg" },
-            { id: 20, category: "Rotis & Curries", name: "Chapatis [2 Pcs] with Chicken Curry [300 Gm]", price: 200, desc: "2 Pieces of Soft & Fresh Chapatis served with Chicken Curry [300 Gm] [Medium Spicy]", img: "images/chapatis-2-pcs-with-chicken-curry-300-gm.jpg" },
+            { id: 14, category: "Rotis & Curries", name: "Jowar Mini Rotis [5 Pcs] with Khaari Chicken Curry [150 Gm]", price: 150, desc: "5 Pieces of Soft & Fresh Mini Sized Jowar Rotis served with Khaari Chicken Curry [150 Gm]", img: "images/jowar-mini-rotis-5-pcs-with-khaari-chicken-curry-150-gm.jpg" },
+            { id: 15, category: "Rotis & Curries", name: "Raagi Mini Rotis [5 Pcs] with Khaari Chicken Curry [150 Gm]", price: 150, desc: "5 Pieces of Soft & Fresh Mini Sized Raagi Rotis served with Khaari Chicken Curry [150 Gm]", img: "images/raagi-mini-rotis-5-pcs-with-khaari-chicken-curry-150-gm.jpg" },
+            { id: 16, category: "Rotis & Curries", name: "Bajra Mini Rotis [5 Pcs] with Khaari Chicken Curry [150 Gm]", price: 150, desc: "5 Pieces of Soft & Fresh Mini Sized Bajra Rotis served with Khaari Chicken Curry [150 Gm]", img: "images/bajra-mini-rotis-5-pcs-with-khaari-chicken-curry-150-gm.jpg" },
+            { id: 17, category: "Rotis & Curries", name: "Jowar Rotis [2 Pcs] with Chicken Curry [300 Gm]", price: 200, desc: "2 Pieces of Soft & Fresh Jowar Rotis served with Chicken Curry [300 Gm]", img: "images/jowar-rotis-2-pcs-with-chicken-curry-300-gm.jpg" },
+            { id: 18, category: "Rotis & Curries", name: "Raagi Rotis [2 Pcs] with Chicken Curry [300 Gm]", price: 200, desc: "2 Pieces of Soft & Fresh Raagi Rotis served with Chicken Curry [300 Gm]", img: "images/raagi-rotis-2-pcs-with-chicken-curry-300-gm.jpg" },
+            { id: 19, category: "Rotis & Curries", name: "Bajra Rotis [2 Pcs] with Chicken Curry [300 Gm]", price: 200, desc: "2 Pieces of Soft & Fresh Bajra Rotis served with Chicken Curry [300 Gm]", img: "images/bajra-rotis-2-pcs-with-chicken-curry-300-gm.jpg" },
+            { id: 20, category: "Rotis & Curries", name: "Chapatis [2 Pcs] with Chicken Curry [300 Gm]", price: 200, desc: "2 Pieces of Soft & Fresh Chapatis served with Chicken Curry [300 Gm]", img: "images/chapatis-2-pcs-with-chicken-curry-300-gm.jpg" },
             { id: 21, category: "Specials", name: "Millet Dosa [2 Pcs]", price: 65, desc: "2 Pieces of Millet Dosa served with Peanut Chutney and Ginger Chutney", img: "images/millet-dosa-2-pcs.jpg" },
             { id: 22, category: "Specials", name: "Raagi Java [400 Gm] Plain", price: 50, desc: "Hot Raagi Java [400 Gm] Plain", img: "images/raagi-java-400-gm-plain.jpg" },
             { id: 23, category: "Specials", name: "Raagi Java [400 Gm] Salted", price: 50, desc: "Hot Raagi Java [400 Gm] Salted", img: "images/raagi-java-400-gm-salted.jpg" },
@@ -1147,12 +1068,16 @@
             { id: 25, category: "Specials", name: "Jonna Sangati [400 Gm] with Khari Chicken [300 Gm]", price: 175, desc: "Jonna Sangati [400 Gm] with Khari Chicken [300 Gm]", img: "images/jonna-sangati-400-gm-with-khari-chicken-300-gm.jpg" },
             { id: 26, category: "Specials", name: "Jonna Sangati [400 Gm] with Curd", price: 70, desc: "Jonna Sangati [400 Gm] with Curd", img: "images/jonna-sangati-400-gm-with-curd.jpg" },
             { id: 27, category: "Specials", name: "Jonna Sangati [400 Gm] with Vegetables Chutney", price: 70, desc: "Jonna Sangati [400 Gm] with Vegetables Chutney", img: "images/jonna-sangati-400-gm-with-vegetables-chutney.jpg" },
-            { id: 28, category: "Specials", name: "Millet Curd [Jowar] [400 Gm]", price: 85, desc: "Fresh Jowar Roti soaked in curd. This is a famous traditional dish.", img: "images/millet-curd-jowar-400-gm.jpg" },
-            { id: 29, category: "Specials", name: "Millet Curd [Raagi] [400 Gm]", price: 85, desc: "Fresh Raagi Roti soaked in curd. This is a famous traditional dish.", img: "images/millet-curd-raagi-400-gm.jpg" },
-            { id: 30, category: "Specials", name: "Millet Curd [Bajra] [400 Gm]", price: 85, desc: "Fresh Bajra Roti soaked in curd. This is a famous traditional dish.", img: "images/millet-curd-bajra-400-gm.jpg" },
+            { id: 28, category: "Specials", name: "Millet Curd [Jowar] [400 Gm]", price: 85, desc: "Fresh Jowar Roti soaked in curd.", img: "images/millet-curd-jowar-400-gm.jpg" },
+            { id: 29, category: "Specials", name: "Millet Curd [Raagi] [400 Gm]", price: 85, desc: "Fresh Raagi Roti soaked in curd.", img: "images/millet-curd-raagi-400-gm.jpg" },
+            { id: 30, category: "Specials", name: "Millet Curd [Bajra] [400 Gm]", price: 85, desc: "Fresh Bajra Roti soaked in curd.", img: "images/millet-curd-bajra-400-gm.jpg" },
             { id: 31, category: "Meals", name: "Jeera Basmati Rice with Dal Tadka", price: 145, desc: "Jeera Basmati Rice with Dal Tadka", img: "images/jeera-basmati-rice-with-dal-tadka.jpg" },
             { id: 32, category: "Meals", name: "Jeera Basmati Rice with Chicken Curry", price: 250, desc: "Jeera Basmati Rice with Chicken Curry", img: "images/jeera-basmati-rice-with-chicken-curry.jpg" }
         ];
+
+        let cachedSubscriptionPlans = [];
+        let currentSubTab = "Weekly";
+        let activeSubscriptionSelection = null;
 
         const cart = {};
         let currentCategory = "Plain Rotis";
@@ -1163,26 +1088,108 @@
         let pollTimer = null;
         let configSyncTimer = null;
         let lastKnownOrderStatus = "";
-        let currentBannerState = "start";
         let lastConfirmedOrderData = null;
         let isFirstConfigLoad = true;
+        let authenticatedUser = null;
 
-        let touchStartY = 0;
-        window.addEventListener('touchstart', function (e) {
-            touchStartY = e.touches[0].pageY;
-        }, { passive: true });
+        function getTodayString() {
+            const now = new Date();
+            return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        }
 
-        window.addEventListener('touchmove', function (e) {
-            const touchY = e.touches[0].pageY;
-            const touchDiff = touchY - touchStartY;
-            if (window.scrollY === 0 && touchDiff > 0) {
-                if (e.cancelable) {
-                    e.preventDefault();
+        function getMinAllowedPickupTime() {
+            const now = new Date();
+            const minTime = new Date(now.getTime() + 30 * 60000);
+            return `${String(minTime.getHours()).padStart(2, '0')}:${String(minTime.getMinutes()).padStart(2, '0')}`;
+        }
+
+        function formatTimeTo12Hour(timeStr) {
+            if (!timeStr) return "";
+            if (timeStr.includes("GMT") || timeStr.length > 8) {
+                const d = new Date(timeStr);
+                if (!isNaN(d.getTime())) {
+                    let hours = d.getHours();
+                    const minutes = String(d.getMinutes()).padStart(2, '0');
+                    const ampm = hours >= 12 ? 'PM' : 'AM';
+                    hours = hours % 12 || 12;
+                    return `${hours}:${minutes} ${ampm}`;
                 }
             }
-        }, { passive: false });
+            const parts = timeStr.split(":");
+            let h = parseInt(parts[0], 10);
+            const period = h >= 12 ? "PM" : "AM";
+            h = h % 12 || 12;
+            return `${h}:${parts[1]} ${period}`;
+        }
 
-        // Silent Analytics Engine (No UI badges shown on website)
+        function adjustPickupTimeDefaults() {
+            const todayStr = getTodayString();
+            const dateInput = document.getElementById("pickup-date");
+            const timeInput = document.getElementById("pickup-time");
+
+            if (!dateInput.value || dateInput.value < todayStr) dateInput.value = todayStr;
+            dateInput.min = todayStr;
+
+            const minAllowed = getMinAllowedPickupTime();
+            if (dateInput.value === todayStr) {
+                timeInput.min = minAllowed;
+                if (!timeInput.value || timeInput.value < minAllowed) {
+                    timeInput.value = minAllowed;
+                }
+            } else {
+                timeInput.removeAttribute("min");
+                if (!timeInput.value) timeInput.value = "12:30";
+            }
+        }
+
+        function validatePickupTimeNotPast() {
+            const todayStr = getTodayString();
+            const dateInput = document.getElementById("pickup-date");
+            const timeInput = document.getElementById("pickup-time");
+
+            if (dateInput.value === todayStr) {
+                const minAllowed = getMinAllowedPickupTime();
+                if (timeInput.value < minAllowed) {
+                    alert("Pickup time must be at least 30 minutes from now. Adjusted automatically.");
+                    timeInput.value = minAllowed;
+                }
+            }
+        }
+
+        function adjustSubPickupTimeConstraints() {
+            const todayStr = getTodayString();
+            const subDateInput = document.getElementById("sub-start-date");
+            const subTimeInput = document.getElementById("sub-daily-time");
+
+            if (!subDateInput.value || subDateInput.value < todayStr) subDateInput.value = todayStr;
+            subDateInput.min = todayStr;
+
+            const minAllowed = getMinAllowedPickupTime();
+            if (subDateInput.value === todayStr) {
+                subTimeInput.min = minAllowed;
+                if (!subTimeInput.value || subTimeInput.value < minAllowed) {
+                    subTimeInput.value = minAllowed;
+                }
+            } else {
+                subTimeInput.removeAttribute("min");
+                if (!subTimeInput.value) subTimeInput.value = "13:00";
+            }
+        }
+
+        function validateSubTimeNotPast() {
+            const todayStr = getTodayString();
+            const subDateInput = document.getElementById("sub-start-date");
+            const subTimeInput = document.getElementById("sub-daily-time");
+
+            if (subDateInput.value === todayStr) {
+                const minAllowed = getMinAllowedPickupTime();
+                if (subTimeInput.value < minAllowed) {
+                    alert("Today's pickup time must be at least 30 minutes from now.");
+                    subTimeInput.value = minAllowed;
+                }
+            }
+        }
+
         async function recordPageView() {
             try {
                 let userUid = localStorage.getItem("ymr_analytics_uid");
@@ -1190,17 +1197,13 @@
                     userUid = "usr_" + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
                     localStorage.setItem("ymr_analytics_uid", userUid);
                 }
-
                 const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
                 const platformTag = isMobile ? "Mobile Device" : "Desktop/Laptop";
-
-                await fetch(`${SCRIPT_URL}?action=PAGE_VIEW&uid=${encodeURIComponent(userUid)}&device=${encodeURIComponent(platformTag)}&t=${Date.now()}`, {
+                fetch(`${SCRIPT_URL}?action=PAGE_VIEW&uid=${encodeURIComponent(userUid)}&device=${encodeURIComponent(platformTag)}&t=${Date.now()}`, {
                     method: "GET",
                     mode: "no-cors"
-                });
-            } catch (err) {
-                console.warn("Analytics ping notice:", err);
-            }
+                }).catch(() => {});
+            } catch (err) {}
         }
 
         function requestNotificationPermission() {
@@ -1208,37 +1211,24 @@
                 alert("Browser notifications are not supported on this device.");
                 return;
             }
-
             Notification.requestPermission().then(permission => {
                 const btn = document.getElementById("btn-enable-notify");
                 if (permission === "granted") {
                     if (btn) btn.style.display = "none";
-                    showLocalNotification("Notifications Active 🔔", "You will receive live updates when your order status changes.");
-                } else {
-                    alert("Notification permission denied. You can still see updates live on this page.");
+                    showLocalNotification("Notifications Active 🔔", "You will receive updates when your order status changes.");
                 }
             });
         }
 
         function showLocalNotification(title, bodyText) {
             if ("Notification" in window && Notification.permission === "granted") {
-                try {
-                    new Notification(title, {
-                        body: bodyText,
-                        icon: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=128&q=80",
-                        badge: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=128&q=80"
-                    });
-                } catch (e) {
-                    console.warn("Notification trigger notice:", e);
-                }
+                try { new Notification(title, { body: bodyText }); } catch (e) {}
             }
         }
 
         function setTopNotice(type) {
-            currentBannerState = type;
             const banner = document.getElementById("top-warning-banner");
             if (!banner) return;
-
             if (type === "payment") {
                 banner.style.display = "block";
                 banner.className = "banner-warning";
@@ -1248,55 +1238,308 @@
             }
         }
 
-        function formatTimeTo12Hour(timeStr) {
-            if (!timeStr) return "";
-            const parts = timeStr.split(":");
-            let h = parseInt(parts[0], 10);
-            const period = h >= 12 ? "PM" : "AM";
-            h = h % 12 || 12;
-            return `${h}:${parts[1]} ${period}`;
+        function copyUpiId() {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(RESTAURANT_UPI_ID).then(() => alert("UPI ID copied: " + RESTAURANT_UPI_ID));
+            } else {
+                prompt("Copy UPI ID:", RESTAURANT_UPI_ID);
+            }
         }
 
-        function adjustPickupTimeDefaults() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, "0");
-            const day = String(now.getDate()).padStart(2, "0");
-            const todayStr = `${year}-${month}-${day}`;
-
-            const dateInput = document.getElementById("pickup-date");
-            const timeInput = document.getElementById("pickup-time");
-
-            if (!dateInput.value) {
-                dateInput.value = todayStr;
-            }
-            dateInput.min = todayStr;
-
-            const futureTime = new Date(now.getTime() + 30 * 60000);
-            const futureHH = String(futureTime.getHours()).padStart(2, "0");
-            const futureMM = String(futureTime.getMinutes()).padStart(2, "0");
-            const formatted30MinTime = `${futureHH}:${futureMM}`;
-
-            if (dateInput.value === todayStr) {
-                timeInput.min = formatted30MinTime;
-                if (!timeInput.value || timeInput.value < formatted30MinTime) {
-                    timeInput.value = formatted30MinTime;
-                }
+        function checkStoredAuth() {
+            const saved = localStorage.getItem("ymr_auth_user");
+            if (saved) {
+                try {
+                    authenticatedUser = JSON.parse(saved);
+                    document.getElementById("auth-nav-btn").innerText = `👤 ${authenticatedUser.name.split(' ')[0]}`;
+                    const custNameInput = document.getElementById("cust-name");
+                    const custPhoneInput = document.getElementById("cust-phone");
+                    if (custNameInput && !custNameInput.value) custNameInput.value = authenticatedUser.name;
+                    if (custPhoneInput && !custPhoneInput.value) custPhoneInput.value = authenticatedUser.phone;
+                    fetchActivePendingOrders();
+                } catch (e) {}
             } else {
-                timeInput.removeAttribute("min");
-                if (!timeInput.value) {
-                    timeInput.value = "12:30";
-                }
+                document.getElementById("active-orders-banner").classList.add("hidden");
             }
+        }
+
+        async function fetchActivePendingOrders() {
+            if (!authenticatedUser || !authenticatedUser.phone) return;
+            const banner = document.getElementById("active-orders-banner");
+            const listDiv = document.getElementById("active-orders-list");
+
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=GET_ACTIVE_ORDERS&phone=${authenticatedUser.phone}&t=${Date.now()}`);
+                const data = await res.json();
+
+                if (!data.success || !data.orders || data.orders.length === 0) {
+                    banner.classList.add("hidden");
+                    return;
+                }
+
+                // Filter out completed and cancelled orders
+                const activeOnes = data.orders.filter(o => {
+                    const st = String(o.status || "").toUpperCase();
+                    if (st === "DELIVERED" || st === "PICKED_UP" || st === "CANCELLED" || st === "COMPLETED") {
+                        return false;
+                    }
+                    if (o.isSubscription && o.remainingSubDays <= 0) {
+                        return false;
+                    }
+                    return true;
+                });
+
+                if (activeOnes.length === 0) {
+                    banner.classList.add("hidden");
+                    return;
+                }
+
+                let html = "";
+                activeOnes.forEach(ord => {
+                    const isSub = ord.isSubscription;
+                    html += `
+                        <div class="active-order-chip">
+                            <div>
+                                <strong style="color:var(--primary); font-size:13px;">${ord.orderId}</strong>
+                                <span style="font-size:12px; color:#495057;"> • ${ord.itemsSummary}</span>
+                                <div style="font-size:11.5px; color:#6c757d; margin-top:2px;">
+                                    ${isSub ? `📅 Next Pickup: <strong>${ord.nextPickupSlot || 'Scheduled upon acceptance'}</strong> (${ord.remainingSubDays} Days Remaining)` : `⏰ Pickup: <strong>${ord.pickupDetails}</strong>`}
+                                </div>
+                            </div>
+                            <span class="status-badge-live ${ord.status === 'READY' ? 'status-badge-ready' : 'status-badge-pending'}">${ord.status}</span>
+                        </div>
+                    `;
+                });
+
+                listDiv.innerHTML = html;
+                banner.classList.remove("hidden");
+            } catch (err) {
+                banner.classList.add("hidden");
+            }
+        }
+
+        function openAuthModal() {
+            if (authenticatedUser) openHistoryModal();
+            else document.getElementById("auth-modal").classList.remove("hidden");
+        }
+
+        function closeAuthModal() { document.getElementById("auth-modal").classList.add("hidden"); }
+
+        function toggleAuthMode(mode) {
+            if (mode === 'register') {
+                document.getElementById("login-fields").classList.add("hidden");
+                document.getElementById("register-fields").classList.remove("hidden");
+            } else {
+                document.getElementById("register-fields").classList.add("hidden");
+                document.getElementById("login-fields").classList.remove("hidden");
+            }
+        }
+
+        async function submitRegister() {
+            const name = document.getElementById("auth-reg-name").value.trim();
+            const phone = document.getElementById("auth-reg-phone").value.trim();
+            const password = document.getElementById("auth-reg-pass").value.trim();
+            if (!name || !phone || !password) { alert("Please fill all fields."); return; }
+            if (!/^[6-9]\d{9}$/.test(phone)) { alert("Please enter a valid 10-digit Indian Mobile Number."); return; }
+
+            const res = await fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "REGISTER_USER", name, phone, password })
+            });
+            const data = await res.json();
+            if (data.success) {
+                localStorage.setItem("ymr_auth_user", JSON.stringify(data.user));
+                localStorage.setItem("ymr_auth_pass", password);
+                location.reload();
+            } else alert(data.message || "Registration failed.");
+        }
+
+        async function submitLogin() {
+            const phone = document.getElementById("auth-login-phone").value.trim();
+            const password = document.getElementById("auth-login-pass").value.trim();
+            if (!phone || !password) { alert("Enter phone and password."); return; }
+
+            const res = await fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "LOGIN_USER", phone, password })
+            });
+            const data = await res.json();
+            if (data.success) {
+                localStorage.setItem("ymr_auth_user", JSON.stringify({ name: data.name, phone: phone }));
+                localStorage.setItem("ymr_auth_pass", password);
+                location.reload();
+            } else alert(data.message || "Login failed.");
+        }
+
+        function logoutCustomer() {
+            localStorage.removeItem("ymr_auth_user");
+            localStorage.removeItem("ymr_auth_pass");
+            location.reload();
+        }
+
+        async function openHistoryModal() {
+            document.getElementById("history-modal").classList.remove("hidden");
+            const listDiv = document.getElementById("history-content-list");
+            listDiv.innerHTML = `<div class="spinner"></div><p style="text-align:center;">Loading orders & subscriptions...</p>`;
+
+            const pass = localStorage.getItem("ymr_auth_pass") || "";
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=GET_ORDER_HISTORY&phone=${authenticatedUser.phone}&password=${encodeURIComponent(pass)}&t=${Date.now()}`);
+                const data = await res.json();
+
+                if (!data.success || !data.orders || data.orders.length === 0) {
+                    listDiv.innerHTML = `<p style="text-align:center; color:#6c757d;">No previous records found.</p>`;
+                    return;
+                }
+
+                window.cachedOrdersHistory = data.orders;
+                let html = "";
+                data.orders.forEach((ord, index) => {
+                    const isSub = ord.isSubscription;
+                    const percent = ord.totalSubDays > 0 ? Math.round((ord.completedSubDays / ord.totalSubDays) * 100) : 0;
+
+                    html += `
+                        <div style="border:1px solid #dee2e6; border-radius:8px; padding:12px; margin-bottom:12px; background:#fff;">
+                            <div style="display:flex; justify-content:space-between; font-weight:bold;">
+                                <span>${ord.orderId}</span>
+                                <span style="color:var(--primary);">${ord.finalPayable ? `Rs. ${ord.finalPayable}` : ord.totalPrice}</span>
+                            </div>
+                            <div style="color:#6c757d; font-size:11.5px; margin:3px 0;">${ord.timestamp} | ${ord.pickupDetails || ''}</div>
+                            <div style="font-size:12px; margin-bottom: 6px;"><strong>Summary:</strong> ${ord.itemsSummary}</div>
+
+                            ${isSub ? `
+                                <div style="background:#f1f3f5; border-radius:6px; padding:8px 10px; margin:8px 0; font-size:12px;">
+                                    <div style="display:flex; justify-content:space-between; font-weight:600;">
+                                        <span>Subscription Days Progress:</span>
+                                        <span style="color:#2b8a3e;">${ord.completedSubDays} / ${ord.totalSubDays} Days Done</span>
+                                    </div>
+                                    <div class="sub-progress-bar">
+                                        <div class="sub-progress-fill" style="width:${percent}%;"></div>
+                                    </div>
+                                    <div style="color:#495057; font-size:11px;">
+                                        ${ord.remainingSubDays > 0 ? `👉 <strong>${ord.remainingSubDays} Days Remaining</strong> (Next: ${ord.nextPickupSlot || 'Scheduled upon acceptance'})` : `✅ Subscription Completed!`}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                                <span class="status-badge-live ${ord.status === 'READY' ? 'status-badge-ready' : 'status-badge-pending'}">${ord.status}</span>
+                                <div style="display:flex; gap:6px;">
+                                    ${ord.receiptUrl && ord.receiptUrl.startsWith('http') ? `<a href="${ord.receiptUrl}" target="_blank" class="header-btn auth-status-btn" style="background:#e7f5ff; color:#1971c2; text-decoration:none;">Drive Link ↗</a>` : ''}
+                                    <button type="button" class="header-btn auth-status-btn" style="background:#2563eb; color:#fff;" onclick="downloadHistoryVectorPdf(${index})">📄 Vector PDF</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                listDiv.innerHTML = html;
+            } catch (e) {
+                listDiv.innerHTML = `<p style="color:red; text-align:center;">Failed to load history.</p>`;
+            }
+        }
+
+        function closeHistoryModal() { document.getElementById("history-modal").classList.add("hidden"); }
+
+        function openSubscriptionsModal() {
+            adjustSubPickupTimeConstraints();
+            document.getElementById("subscriptions-modal").classList.remove("hidden");
+            fetchSubscriptionPlans();
+        }
+
+        function closeSubscriptionsModal() { document.getElementById("subscriptions-modal").classList.add("hidden"); }
+
+        function filterSubTab(type, btn) {
+            currentSubTab = type;
+            document.getElementById("btn-sub-weekly").classList.remove("active");
+            document.getElementById("btn-sub-monthly").classList.remove("active");
+            btn.classList.add("active");
+            renderSubscriptionPlans();
+        }
+
+        async function fetchSubscriptionPlans() {
+            const listDiv = document.getElementById("sub-plans-list");
+            listDiv.innerHTML = `<div class="spinner"></div><p style="text-align:center; color:#6c757d;">Loading plans...</p>`;
+            const res = await fetch(`${SCRIPT_URL}?action=GET_SUBSCRIPTION_PLANS&t=${Date.now()}`);
+            const data = await res.json();
+            if (data.success && Array.isArray(data.plans)) {
+                cachedSubscriptionPlans = data.plans;
+                renderSubscriptionPlans();
+            }
+        }
+
+        function renderSubscriptionPlans() {
+            const listDiv = document.getElementById("sub-plans-list");
+            listDiv.innerHTML = "";
+            const filtered = cachedSubscriptionPlans.filter(p => p.type.toLowerCase() === currentSubTab.toLowerCase());
+            filtered.forEach(plan => {
+                const card = document.createElement("div");
+                card.className = `sub-plan-card ${plan.type.toLowerCase() === "monthly" ? 'monthly' : ''}`;
+                card.innerHTML = `
+                    <div class="item-body">
+                        <div>
+                            <span class="sub-badge ${plan.type.toLowerCase() === 'monthly' ? 'monthly' : ''}">${plan.days} Days • ${plan.discountPercent}% DISCOUNT</span>
+                            <div class="item-top">
+                                <span class="item-name" style="font-size:16px;">${plan.name}</span>
+                                <div style="text-align:right;">
+                                    <div style="font-size:12px; color:#868e96; text-decoration:line-through;">Rs. ${plan.originalTotal}</div>
+                                    <div class="item-price" style="font-size:18px;">Rs. ${plan.finalPrice}</div>
+                                </div>
+                            </div>
+                            <div class="item-desc">${plan.desc}</div>
+                        </div>
+                        <div class="item-actions">
+                            <button type="button" class="btn btn-green" onclick="selectSubscriptionPlan('${plan.id}')">⚡ Subscribe Now</button>
+                        </div>
+                    </div>
+                `;
+                listDiv.appendChild(card);
+            });
+        }
+
+        function selectSubscriptionPlan(planId) {
+            const plan = cachedSubscriptionPlans.find(p => p.id === planId);
+            const name = document.getElementById("cust-name").value.trim();
+            const phone = document.getElementById("cust-phone").value.trim();
+            const startDate = document.getElementById("sub-start-date").value;
+            const dailyTime = document.getElementById("sub-daily-time").value;
+
+            if (!name || !phone) { alert("Please enter Name and Mobile Number first."); closeSubscriptionsModal(); return; }
+            if (!/^[6-9]\d{9}$/.test(phone)) { alert("Please enter a valid 10-digit Indian Mobile Number."); closeSubscriptionsModal(); return; }
+            if (!startDate || !dailyTime) { alert("Please select Start Date and Daily Pickup Time."); return; }
+
+            const dailyTimeFormatted = formatTimeTo12Hour(dailyTime);
+            activeSubscriptionSelection = { ...plan, startDate, dailyTime: dailyTimeFormatted };
+            closeSubscriptionsModal();
+
+            document.getElementById("review-title").innerText = `Review Your ${plan.type} Subscription`;
+            document.getElementById("rcpt-timestamp").innerText = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+            document.getElementById("rcpt-name").innerText = name;
+            document.getElementById("rcpt-phone").innerText = phone;
+            document.getElementById("rcpt-datetime").innerText = `Starts ${startDate} • Daily at ${dailyTimeFormatted} (${plan.days} Days)`;
+            document.getElementById("rcpt-items").innerHTML = `
+                <div class="receipt-line">
+                    <strong><span>${plan.name}</span></strong>
+                    <span>Rs. ${plan.originalTotal}</span>
+                </div>
+                <div class="receipt-line" style="color: #2b8a3e; font-size:13px;">
+                    <span>Special ${plan.discountPercent}% Subscription Discount</span>
+                    <span>- Rs. ${plan.originalTotal - plan.finalPrice}</span>
+                </div>
+            `;
+            document.getElementById("rcpt-total").innerText = plan.finalPrice;
+
+            document.getElementById("step-order").classList.add("hidden");
+            document.getElementById("live-order-bar").classList.add("hidden");
+            document.getElementById("step-review").classList.remove("hidden");
+            setTopNotice("hide");
+            window.scrollTo(0, 0);
         }
 
         async function fetchStoreConfig() {
             try {
-                const cacheBuster = `${SCRIPT_URL}?t=${new Date().getTime()}`;
-                const response = await fetch(cacheBuster, {
-                    method: "GET",
-                    redirect: "follow"
-                });
+                const response = await fetch(`${SCRIPT_URL}?t=${Date.now()}`);
                 const data = await response.json();
 
                 const previousStoreState = isStoreOpen;
@@ -1311,7 +1554,7 @@
                 if (!isStoreOpen) {
                     orderInputsDiv.classList.add("hidden");
                     msgDiv.className = "closed-banner";
-                    msgDiv.innerText = `⚠️ We are currently CLOSED / OUT OF STOCK. We may reopen in an hour. Please check back later.`;
+                    msgDiv.innerText = `⚠️ We are currently CLOSED / OUT OF STOCK. Please check back later.`;
                     msgDiv.classList.remove("hidden");
                 } else {
                     msgDiv.classList.add("hidden");
@@ -1323,10 +1566,8 @@
                     renderMenu();
                     updateLiveSummary();
                 }
-
                 return data;
             } catch (err) {
-                console.warn("Live config sync notice:", err);
                 if (isFirstConfigLoad) {
                     isFirstConfigLoad = false;
                     renderMenu();
@@ -1344,7 +1585,6 @@
         function renderMenu() {
             const menuList = document.getElementById("menu-list");
             menuList.innerHTML = "";
-
             const itemsToDisplay = MENU.filter(item => item.category === currentCategory);
 
             itemsToDisplay.forEach(dish => {
@@ -1359,19 +1599,19 @@
                       <div>
                         <div class="item-top">
                           <span class="item-name">${dish.name}</span>
-                          <span class="item-price">₹${dish.price}</span>
+                          <span class="item-price">Rs. ${dish.price}</span>
                         </div>
                         <div class="item-desc">${dish.desc}</div>
                       </div>
                       <div class="item-actions">
                         ${isSoldOut
-                        ? `<span class="out-of-stock-tag">Out of Stock</span>`
-                        : `<div class="qty-controls">
+                            ? `<span class="out-of-stock-tag">Out of Stock</span>`
+                            : `<div class="qty-controls">
                                   <button type="button" class="qty-btn" onclick="modifyQty(${dish.id}, -1)">-</button>
                                   <span class="qty-display" id="qty-${dish.id}">${cart[dish.id]}</span>
                                   <button type="button" class="qty-btn" onclick="modifyQty(${dish.id}, 1)">+</button>
                                </div>`
-                    }
+                        }
                       </div>
                     </div>
                 `;
@@ -1394,8 +1634,7 @@
         }
 
         function updateLiveSummary() {
-            let total = 0;
-            let count = 0;
+            let total = 0, count = 0;
             const liveList = document.getElementById("live-items-list");
             let summaryHtml = "";
 
@@ -1406,13 +1645,12 @@
                     total += q * dish.price;
                     summaryHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:4px;">
                       <span>${q}x ${dish.name}</span>
-                      <span>₹${q * dish.price}</span>
+                      <span>Rs. ${q * dish.price}</span>
                     </div>`;
                 }
             });
 
             liveList.innerHTML = summaryHtml || "No items selected yet.";
-
             const stickyBar = document.getElementById("live-order-bar");
             const isMenuVisible = !document.getElementById("step-order").classList.contains("hidden");
 
@@ -1423,36 +1661,34 @@
             } else {
                 stickyBar.classList.add("hidden");
             }
-
             return total;
         }
 
         function renderReview() {
+            activeSubscriptionSelection = null;
             const name = document.getElementById("cust-name").value.trim();
             const phone = document.getElementById("cust-phone").value.trim();
-            const date = document.getElementById("pickup-date").value;
-            const time = document.getElementById("pickup-time").value;
+            const d = document.getElementById("pickup-date").value;
+            const t = document.getElementById("pickup-time").value;
             const total = updateLiveSummary();
 
-            if (!name || !phone || !date || !time) {
-                alert("Please fill in all details (Name, Mobile, Pickup Date & Time).");
+            if (!name || !phone || !d || !t || total <= 0) {
+                alert("Please fill all details & select at least 1 food item.");
                 return;
             }
-
             if (!/^[6-9]\d{9}$/.test(phone)) {
-                alert("Please enter a valid 10-digit Indian mobile number.");
+                alert("Please enter a valid 10-digit Indian Mobile Number.");
                 return;
             }
 
-            if (total <= 0) {
-                alert("Please select at least 1 item from the menu.");
-                return;
-            }
+            validatePickupTimeNotPast();
+            const formattedTime = formatTimeTo12Hour(t);
 
+            document.getElementById("review-title").innerText = "Review Your Order";
             document.getElementById("rcpt-timestamp").innerText = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
             document.getElementById("rcpt-name").innerText = name;
             document.getElementById("rcpt-phone").innerText = phone;
-            document.getElementById("rcpt-datetime").innerText = `${date} at ${formatTimeTo12Hour(time)}`;
+            document.getElementById("rcpt-datetime").innerText = `${d} at ${formattedTime}`;
 
             const itemsNode = document.getElementById("rcpt-items");
             itemsNode.innerHTML = "";
@@ -1461,138 +1697,200 @@
                     itemsNode.innerHTML += `
                       <div class="receipt-line">
                         <span>${cart[dish.id]}x ${dish.name}</span>
-                        <span>₹${cart[dish.id] * dish.price}</span>
+                        <span>Rs. ${cart[dish.id] * dish.price}</span>
                       </div>
                     `;
                 }
             });
-
             document.getElementById("rcpt-total").innerText = total;
 
             document.getElementById("step-order").classList.add("hidden");
             document.getElementById("live-order-bar").classList.add("hidden");
             document.getElementById("step-review").classList.remove("hidden");
-
             setTopNotice("hide");
             window.scrollTo(0, 0);
         }
 
         function showOrderForm() {
+            activeSubscriptionSelection = null;
             document.getElementById("step-review").classList.add("hidden");
             document.getElementById("step-order").classList.remove("hidden");
-
             setTopNotice("hide");
             updateLiveSummary();
         }
 
         async function cancelPaymentAndEdit() {
             if (pollTimer) clearInterval(pollTimer);
-
             if (activeOrderId) {
                 fetch(SCRIPT_URL, {
                     method: "POST",
                     headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify({
-                        action: "CANCEL_ORDER",
-                        orderId: activeOrderId
-                    }),
-                    redirect: "follow"
-                }).catch(err => console.warn("Cancel order sync error:", err));
+                    body: JSON.stringify({ action: "CANCEL_ORDER", orderId: activeOrderId })
+                }).catch(() => {});
             }
-
             document.getElementById("step-payment").classList.add("hidden");
             document.getElementById("step-review").classList.remove("hidden");
 
             const submitBtn = document.getElementById("submit-btn");
             submitBtn.disabled = false;
             submitBtn.innerText = "Confirm & Place Order";
-
             setTopNotice("hide");
             window.scrollTo(0, 0);
+        }
+
+        function generateVectorPdfDoc(data) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(16);
+            doc.setTextColor(201, 42, 42);
+            doc.text("YAADY'S MILLET ROTI MEALS", 105, 16, { align: "center" });
+
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(9);
+            doc.setTextColor(90, 90, 90);
+            doc.text("Traditional Millet Roti Meals — Manikonda, Hyderabad | Ph: +91 9000001690", 105, 22, { align: "center" });
+            doc.text(`Official Receipt: ${data.timestamp}`, 105, 27, { align: "center" });
+
+            doc.setDrawColor(200, 200, 200);
+            doc.line(14, 31, 196, 31);
+
+            doc.setFontSize(10);
+            doc.setTextColor(33, 37, 41);
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Order/Sub ID:", 14, 38);
+            doc.setTextColor(201, 42, 42);
+            doc.text(String(data.orderId || ""), 45, 38);
+
+            doc.setTextColor(33, 37, 41);
+            doc.setFont("helvetica", "bold");
+            doc.text("Customer:", 14, 44);
+            doc.setFont("helvetica", "normal");
+            doc.text(String(data.name || ""), 45, 44);
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Mobile:", 14, 50);
+            doc.setFont("helvetica", "normal");
+            doc.text(String(data.phone || ""), 45, 50);
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Schedule:", 115, 38);
+            doc.setFont("helvetica", "normal");
+            doc.text(String(data.pickupDetails || `${data.pickupDate} ${data.pickupTime}`), 145, 38);
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Status:", 115, 44);
+            doc.setFont("helvetica", "bold");
+            doc.text(String(data.status || "CONFIRMED"), 145, 44);
+
+            const tableRows = (data.itemsList || []).map((item, idx) => [
+                idx + 1,
+                item.name,
+                item.qty,
+                `Rs. ${item.price}`,
+                `Rs. ${item.qty * item.price}`
+            ]);
+
+            doc.autoTable({
+                startY: 56,
+                head: [['#', 'Item / Package Description', 'Qty', 'Unit Price', 'Total']],
+                body: tableRows,
+                headStyles: { fillColor: [201, 42, 42], textColor: [255, 255, 255], fontStyle: 'bold' },
+                columnStyles: {
+                    0: { cellWidth: 10, halign: 'center' },
+                    1: { cellWidth: 100 },
+                    2: { cellWidth: 20, halign: 'center' },
+                    3: { cellWidth: 25, halign: 'right' },
+                    4: { cellWidth: 25, halign: 'right' }
+                },
+                margin: { left: 14, right: 14 }
+            });
+
+            const finalY = doc.lastAutoTable.finalY + 8;
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(11);
+            doc.setTextColor(201, 42, 42);
+            doc.text("Total Paid:", 140, finalY + 4);
+            doc.text(`Rs. ${data.finalPayable}`, 196, finalY + 4, { align: "right" });
+
+            return doc;
+        }
+
+        function downloadVectorReceiptPdf(data) {
+            if (!data) { alert("Order details not found."); return; }
+            try {
+                const doc = generateVectorPdfDoc(data);
+                doc.save(`Yaadys_Receipt_${data.orderId}.pdf`);
+            } catch (err) {
+                alert("Could not generate vector PDF receipt.");
+            }
+        }
+
+        function downloadHistoryVectorPdf(index) {
+            const ord = window.cachedOrdersHistory[index];
+            if (!ord) return;
+            downloadVectorReceiptPdf(ord);
         }
 
         async function sendOrder() {
             const submitBtn = document.getElementById("submit-btn");
             submitBtn.disabled = true;
-            submitBtn.innerText = "Checking Kitchen Availability...";
+            submitBtn.innerText = "Processing...";
 
             try {
-                const latestConfig = await fetchStoreConfig();
-                const isCurrentlyOpen = latestConfig.storeOpen !== false;
-                const currentOutOfStock = Array.isArray(latestConfig.outOfStock) ? latestConfig.outOfStock : [];
-
-                if (!isCurrentlyOpen) {
-                    alert("⚠️ Sorry, Yaady's Kitchen is currently CLOSED or not accepting orders. Please check back later.");
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = "Confirm & Place Order";
-                    document.getElementById("step-review").classList.add("hidden");
-                    document.getElementById("step-order").classList.remove("hidden");
-                    setTopNotice("hide");
-                    return;
-                }
-
-                const unavailableItemNames = [];
-                let hasRemovedItems = false;
-
-                MENU.forEach(dish => {
-                    if ((cart[dish.id] || 0) > 0 && currentOutOfStock.includes(dish.id)) {
-                        unavailableItemNames.push(dish.name);
-                        cart[dish.id] = 0;
-                        hasRemovedItems = true;
-                    }
-                });
-
-                if (hasRemovedItems) {
-                    const newTotal = updateLiveSummary();
-                    renderMenu();
-
-                    if (newTotal <= 0) {
-                        alert(`⚠️ Non-Availability Notice:\nThe following item(s) are currently OUT OF STOCK and were removed:\n• ${unavailableItemNames.join("\n• ")}\n\nYour cart is now empty. Please choose available dishes.`);
-                        submitBtn.disabled = false;
-                        submitBtn.innerText = "Confirm & Place Order";
-                        document.getElementById("step-review").classList.add("hidden");
-                        document.getElementById("step-order").classList.remove("hidden");
-                        setTopNotice("hide");
-                        return;
-                    } else {
-                        alert(`⚠️ Non-Availability Notice:\nThe following item(s) just went OUT OF STOCK and were removed from your order:\n• ${unavailableItemNames.join("\n• ")}\n\nYour order summary and total have been updated. Please review before proceeding.`);
-
-                        const itemsNode = document.getElementById("rcpt-items");
-                        itemsNode.innerHTML = "";
-
-                        MENU.forEach(dish => {
-                            if (cart[dish.id] > 0) {
-                                itemsNode.innerHTML += `
-                                  <div class="receipt-line">
-                                    <span>${cart[dish.id]}x ${dish.name}</span>
-                                    <span>₹${cart[dish.id] * dish.price}</span>
-                                  </div>
-                                `;
-                            }
-                        });
-
-                        document.getElementById("rcpt-total").innerText = newTotal;
-                        submitBtn.disabled = false;
-                        submitBtn.innerText = "Confirm & Place Order";
-                        return;
-                    }
-                }
-
-                submitBtn.innerText = "Confirming Order...";
-
                 const name = document.getElementById("cust-name").value.trim();
                 const phone = document.getElementById("cust-phone").value.trim();
-                const pickupDate = document.getElementById("pickup-date").value;
-                const pickupTimeFormatted = formatTimeTo12Hour(document.getElementById("pickup-time").value);
-                activeTotal = updateLiveSummary();
-                const totalAmount = `₹${activeTotal}`;
 
-                activeOrderId = "YMR-" + Math.floor(1000 + Math.random() * 9000);
-                lastKnownOrderStatus = "PENDING";
+                let pickupDetails = "";
+                let itemsSummary = "";
+                let itemsList = [];
+                let isSubscriptionOrder = false;
+                let subscriptionPayloadData = null;
 
-                if ("Notification" in window && Notification.permission === "default") {
-                    Notification.requestPermission();
+                if (activeSubscriptionSelection) {
+                    isSubscriptionOrder = true;
+                    const plan = activeSubscriptionSelection;
+                    activeTotal = plan.finalPrice;
+                    activeOrderId = "SUB-" + Math.floor(1000 + Math.random() * 9000);
+                    pickupDetails = `Starts ${plan.startDate} • Daily at ${plan.dailyTime} (${plan.days} Days)`;
+                    itemsSummary = `${plan.name} [${plan.type} Pack - ${plan.days} Days]`;
+                    itemsList = [{ name: `${plan.name} (${plan.days} Days Pack)`, qty: 1, price: plan.finalPrice }];
+                    
+                    subscriptionPayloadData = {
+                        planId: plan.id,
+                        planType: plan.type,
+                        planName: plan.name,
+                        daysCount: plan.days,
+                        startDate: plan.startDate,
+                        dailyTime: plan.dailyTime
+                    };
+                } else {
+                    const latestConfig = await fetchStoreConfig();
+                    if (latestConfig.storeOpen === false) {
+                        alert("⚠️ Sorry, Yaady's Kitchen is currently CLOSED.");
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = "Confirm & Place Order";
+                        return;
+                    }
+
+                    const pickupDate = document.getElementById("pickup-date").value;
+                    const pickupTimeFormatted = formatTimeTo12Hour(document.getElementById("pickup-time").value);
+                    activeTotal = updateLiveSummary();
+                    activeOrderId = "YMR-" + Math.floor(1000 + Math.random() * 9000);
+                    pickupDetails = `${pickupDate} at ${pickupTimeFormatted}`;
+
+                    MENU.forEach(dish => {
+                        if (cart[dish.id] > 0) {
+                            itemsList.push({ name: dish.name, qty: cart[dish.id], price: dish.price });
+                        }
+                    });
+                    itemsSummary = MENU.filter(dish => cart[dish.id] > 0).map(dish => `${cart[dish.id]}x ${dish.name}`).join(", ");
                 }
+
+                const totalAmount = `Rs. ${activeTotal}`;
+                lastKnownOrderStatus = "PENDING";
 
                 document.getElementById("step-review").classList.add("hidden");
                 document.getElementById("live-order-bar").classList.add("hidden");
@@ -1608,98 +1906,86 @@
                 document.getElementById("conf-id").innerText = activeOrderId;
                 document.getElementById("conf-name").innerText = name;
                 document.getElementById("conf-phone").innerText = phone;
-                document.getElementById("conf-slot").innerText = `${pickupDate} at ${pickupTimeFormatted}`;
+                document.getElementById("conf-slot").innerText = pickupDetails;
                 document.getElementById("conf-total").innerText = totalAmount;
 
                 const confItemsNode = document.getElementById("conf-items");
                 confItemsNode.innerHTML = "";
-
-                const itemsList = [];
-                MENU.forEach(dish => {
-                    if (cart[dish.id] > 0) {
-                        itemsList.push({ name: dish.name, qty: cart[dish.id], price: dish.price });
-                        confItemsNode.innerHTML += `
-                          <div class="receipt-line">
-                            <span>${cart[dish.id]}x ${dish.name}</span>
-                            <span>₹${cart[dish.id] * dish.price}</span>
-                          </div>
-                        `;
-                    }
+                itemsList.forEach(it => {
+                    confItemsNode.innerHTML += `
+                      <div class="receipt-line">
+                        <span>${it.qty}x ${it.name}</span>
+                        <span>Rs. ${it.qty * it.price}</span>
+                      </div>
+                    `;
                 });
 
                 lastConfirmedOrderData = {
                     orderId: activeOrderId,
                     name: name,
                     phone: phone,
-                    pickupDate: pickupDate,
-                    pickupTime: pickupTimeFormatted,
+                    pickupDetails: pickupDetails,
                     itemsList: itemsList,
                     totalPrice: totalAmount,
+                    finalPayable: activeTotal,
+                    status: "PENDING",
                     timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
                 };
+
+                let pdfBase64 = "";
+                try {
+                    const doc = generateVectorPdfDoc(lastConfirmedOrderData);
+                    pdfBase64 = doc.output('datauristring');
+                } catch (pdfErr) {}
 
                 const upiPaymentUri = `upi://pay?pa=${RESTAURANT_UPI_ID}&pn=Yaadys%20Millet%20Roti%20Meals&am=${activeTotal}&cu=INR&tn=Order%20${activeOrderId}`;
                 document.getElementById("direct-upi-btn").href = upiPaymentUri;
                 document.getElementById("upi-qr-link").href = upiPaymentUri;
+                document.getElementById("upi-qr-image").src = `https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=${encodeURIComponent(upiPaymentUri)}`;
 
-                const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=${encodeURIComponent(upiPaymentUri)}`;
-                document.getElementById("upi-qr-image").src = qrCodeUrl;
-
-                const payWaMsg = `Hi Yaady's Kitchen, sharing payment proof for Order *${activeOrderId}* (Amount: ₹${activeTotal}).`;
+                const payWaMsg = `Hi Yaady's Kitchen, sharing payment proof for ${activeSubscriptionSelection ? 'Subscription' : 'Order'} *${activeOrderId}* (Amount: Rs. ${activeTotal}).`;
                 document.getElementById("wa-contact-btn").href = `https://wa.me/${RESTAURANT_WHATSAPP}?text=${encodeURIComponent(payWaMsg)}`;
 
-                const followupWaMsg = `Hi Yaady's Kitchen, following up on my confirmed Order ID: *${activeOrderId}*.`;
+                const followupWaMsg = `Hi Yaady's Kitchen, following up on ID: *${activeOrderId}*.`;
                 document.getElementById("wa-followup-btn").href = `https://wa.me/${RESTAURANT_WHATSAPP}?text=${encodeURIComponent(followupWaMsg)}`;
-
-                const itemsSummary = MENU
-                    .filter(dish => cart[dish.id] > 0)
-                    .map(dish => `${cart[dish.id]}x ${dish.name}`)
-                    .join(", ");
-
-                const payload = {
-                    orderId: activeOrderId,
-                    name: name,
-                    phone: phone,
-                    pickupDate: pickupDate,
-                    pickupTime: pickupTimeFormatted,
-                    itemsSummary: itemsSummary,
-                    itemsList: itemsList,
-                    totalPrice: totalAmount
-                };
 
                 fetch(SCRIPT_URL, {
                     method: "POST",
                     headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify(payload),
-                    redirect: "follow"
-                }).catch(postErr => console.warn("Backend sync notice:", postErr));
+                    body: JSON.stringify({
+                        action: "CREATE_ORDER",
+                        orderId: activeOrderId,
+                        name: name,
+                        phone: phone,
+                        pickupDetails: pickupDetails,
+                        itemsSummary: itemsSummary,
+                        itemsList: itemsList,
+                        totalPrice: totalAmount,
+                        finalPayable: activeTotal,
+                        pdfBase64: pdfBase64,
+                        isSubscription: isSubscriptionOrder,
+                        subscriptionData: subscriptionPayloadData
+                    })
+                }).catch(() => {});
 
                 startStatusPolling(activeOrderId);
 
             } catch (err) {
-                console.error("Order processing error:", err);
                 submitBtn.disabled = false;
                 submitBtn.innerText = "Confirm & Place Order";
-                document.getElementById("step-payment").classList.add("hidden");
-                document.getElementById("step-review").classList.remove("hidden");
             }
         }
 
         function startStatusPolling(orderId) {
             if (pollTimer) clearInterval(pollTimer);
-
             pollTimer = setInterval(async () => {
                 try {
-                    const res = await fetch(`${SCRIPT_URL}?checkOrderId=${orderId}&t=${new Date().getTime()}`, {
-                        method: "GET",
-                        redirect: "follow"
-                    });
+                    const res = await fetch(`${SCRIPT_URL}?checkOrderId=${orderId}&t=${Date.now()}`);
                     const data = await res.json();
                     const currentStatus = (data.status || "").trim().toUpperCase();
 
-                    document.getElementById("live-order-bar").classList.add("hidden");
-
-                    if (currentStatus === "ACCEPTED" || currentStatus === "CONFIRMED") {
+                    if (currentStatus === "ACCEPTED" || currentStatus === "CONFIRMED" || currentStatus === "PREPARING") {
+                        lastConfirmedOrderData.status = "PREPARING";
                         document.getElementById("step-payment").classList.add("hidden");
                         document.getElementById("step-success").classList.remove("hidden");
                         setTopNotice("hide");
@@ -1710,16 +1996,17 @@
 
                         const badge = document.getElementById("order-status-badge");
                         badge.className = "live-status-pill status-preparing";
-                        document.getElementById("order-status-text").innerText = "Order Confirmed • Food Being Prepared";
-                        document.getElementById("conf-status-label").innerText = "PREPARING";
+                        document.getElementById("order-status-text").innerText = "Confirmed • Kitchen Processing";
+                        document.getElementById("conf-status-label").innerText = "CONFIRMED";
                         document.getElementById("conf-status-label").style.color = "#e67700";
 
                         if (lastKnownOrderStatus !== "ACCEPTED") {
                             lastKnownOrderStatus = "ACCEPTED";
-                            showLocalNotification("Order Confirmed! 🍳", `Your Order #${orderId} is accepted. Food preparation is underway.`);
+                            showLocalNotification("Order Confirmed! 🍳", `Your Order #${orderId} is confirmed.`);
                         }
                     }
-                    else if (currentStatus === "READY" || currentStatus === "COMPLETED") {
+                    else if (currentStatus === "READY") {
+                        lastConfirmedOrderData.status = "READY";
                         document.getElementById("step-payment").classList.add("hidden");
                         document.getElementById("step-success").classList.remove("hidden");
                         setTopNotice("hide");
@@ -1728,24 +2015,20 @@
                         document.getElementById("picked-up-box").classList.add("hidden");
                         document.getElementById("ready-food-box").classList.remove("hidden");
 
-                        document.getElementById("success-icon").innerText = "✓";
-                        document.getElementById("success-heading").innerText = "";
-                        document.getElementById("success-subtext").innerHTML = "";
-
                         const badge = document.getElementById("order-status-badge");
                         badge.className = "live-status-pill status-ready";
                         document.getElementById("order-status-text").innerText = "Your Order is Ready for Pickup!";
-
                         document.getElementById("conf-status-label").innerText = "READY FOR PICKUP";
                         document.getElementById("conf-status-label").style.color = "#2b8a3e";
 
                         if (lastKnownOrderStatus !== "READY") {
                             lastKnownOrderStatus = "READY";
-                            showLocalNotification("Food is Ready! 🛍️", `Order #${orderId} is packed and ready for pickup at Yaady's counter.`);
+                            showLocalNotification("Food is Ready! 🛍️", `Order #${orderId} is packed and ready.`);
                         }
                     }
-                    else if (currentStatus === "PICKED_UP" || currentStatus === "PICKED UP" || currentStatus === "PICKED" || currentStatus === "DELIVERED" || currentStatus === "COLLECTED") {
+                    else if (currentStatus === "PICKED_UP" || currentStatus === "DELIVERED") {
                         clearInterval(pollTimer);
+                        lastConfirmedOrderData.status = "DELIVERED";
                         document.getElementById("step-payment").classList.add("hidden");
                         document.getElementById("step-success").classList.remove("hidden");
                         setTopNotice("hide");
@@ -1754,21 +2037,11 @@
                         document.getElementById("ready-food-box").classList.add("hidden");
                         document.getElementById("picked-up-box").classList.remove("hidden");
 
-                        document.getElementById("success-icon").innerText = "🌾";
-                        document.getElementById("success-heading").innerText = "";
-                        document.getElementById("success-subtext").innerHTML = "";
-
                         const badge = document.getElementById("order-status-badge");
                         badge.className = "live-status-pill status-picked";
                         document.getElementById("order-status-text").innerText = "Order Picked Up • Thank You!";
-
                         document.getElementById("conf-status-label").innerText = "PICKED UP";
                         document.getElementById("conf-status-label").style.color = "#1971c2";
-
-                        if (lastKnownOrderStatus !== "PICKED_UP") {
-                            lastKnownOrderStatus = "PICKED_UP";
-                            showLocalNotification("Order Picked Up 🌾", `Thank you for dining with Yaady's! Enjoy your meal.`);
-                        }
                     }
                     else if (currentStatus === "REJECTED" || currentStatus === "CANCELLED") {
                         clearInterval(pollTimer);
@@ -1776,168 +2049,13 @@
                         document.getElementById("step-success").classList.add("hidden");
                         document.getElementById("step-rejected").classList.remove("hidden");
                         setTopNotice("hide");
-
-                        const rejectedMsg = `Hi Yaady's Kitchen, inquiring regarding my cancelled/unaccepted Order ID: *${orderId}*.`;
-                        document.getElementById("wa-rejected-btn").href = `https://wa.me/${RESTAURANT_WHATSAPP}?text=${encodeURIComponent(rejectedMsg)}`;
-
-                        if (lastKnownOrderStatus !== "CANCELLED") {
-                            lastKnownOrderStatus = "CANCELLED";
-                            showLocalNotification("Order Cancelled", `Order #${orderId} could not be completed.`);
-                        }
                     }
-                } catch (err) {
-                    console.warn("Polling error:", err);
-                }
+                } catch (err) {}
             }, 4000);
         }
 
-        function downloadVectorReceiptPdf() {
-            try {
-                if (!window.jspdf || !window.jspdf.jsPDF) {
-                    alert("PDF library is loading. Please try again in a moment.");
-                    return;
-                }
-
-                const data = lastConfirmedOrderData;
-                if (!data) {
-                    alert("Order details not found. Please screenshot the receipt.");
-                    return;
-                }
-
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF({
-                    orientation: 'portrait',
-                    unit: 'mm',
-                    format: [80, 180]
-                });
-
-                // Header
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(13);
-                doc.setTextColor(201, 42, 42);
-                doc.text("YAADY'S MILLET ROTI MEALS", 40, 12, { align: "center" });
-
-                doc.setFont("helvetica", "normal");
-                doc.setFontSize(8);
-                doc.setTextColor(100, 100, 100);
-                doc.text("TAKEAWAY ORDER RECEIPT", 40, 17, { align: "center" });
-                doc.text(data.timestamp, 40, 21, { align: "center" });
-
-                // Divider line
-                doc.setDrawColor(200, 200, 200);
-                doc.setLineDashPattern([1, 1], 0);
-                doc.line(6, 24, 74, 24);
-
-                // Order Meta Information
-                doc.setFontSize(8.5);
-                doc.setTextColor(33, 37, 41);
-
-                doc.setFont("helvetica", "bold");
-                doc.text("Order ID:", 6, 29);
-                doc.setTextColor(201, 42, 42);
-                doc.text(data.orderId, 74, 29, { align: "right" });
-
-                doc.setTextColor(33, 37, 41);
-                doc.setFont("helvetica", "bold");
-                doc.text("Customer:", 6, 34);
-                doc.setFont("helvetica", "normal");
-                doc.text(data.name, 74, 34, { align: "right" });
-
-                doc.setFont("helvetica", "bold");
-                doc.text("Mobile:", 6, 39);
-                doc.setFont("helvetica", "normal");
-                doc.text(data.phone, 74, 39, { align: "right" });
-
-                doc.setFont("helvetica", "bold");
-                doc.text("Pickup Slot:", 6, 44);
-                doc.setFont("helvetica", "normal");
-                doc.text(`${data.pickupDate} ${data.pickupTime}`, 74, 44, { align: "right" });
-
-                // Table Header
-                doc.line(6, 47, 74, 47);
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(8);
-                doc.text("Item", 6, 51);
-                doc.text("Amount", 74, 51, { align: "right" });
-                doc.line(6, 53, 74, 53);
-
-                // Items list
-                let y = 58;
-                doc.setFont("helvetica", "normal");
-                doc.setFontSize(8);
-
-                data.itemsList.forEach((item) => {
-                    const itemLine = `${item.qty}x ${item.name}`;
-                    const itemTotal = `₹${item.price * item.qty}`;
-
-                    const splitText = doc.splitTextToSize(itemLine, 50);
-                    doc.text(splitText, 6, y);
-                    doc.text(itemTotal, 74, y, { align: "right" });
-
-                    y += (splitText.length * 4.5);
-                });
-
-                // Total line
-                doc.line(6, y, 74, y);
-                y += 5;
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(10);
-                doc.text("Total Amount:", 6, y);
-                doc.setTextColor(201, 42, 42);
-                doc.text(data.totalPrice, 74, y, { align: "right" });
-
-                // Footer Note
-                y += 10;
-                doc.setFont("helvetica", "normal");
-                doc.setFontSize(7.5);
-                doc.setTextColor(120, 120, 120);
-                doc.text("Neknampur, Manikonda, Hyderabad", 40, y, { align: "center" });
-                doc.text("UPI ID: 9000001690@upi", 40, y + 4, { align: "center" });
-                doc.text("Thank you for dining with Yaady's!", 40, y + 8, { align: "center" });
-
-                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-                if (isIOS) {
-                    const pdfBlob = doc.output('blob');
-                    const blobUrl = URL.createObjectURL(pdfBlob);
-                    window.open(blobUrl, '_blank');
-                } else {
-                    doc.save(`Receipt_${data.orderId}.pdf`);
-                }
-            } catch (err) {
-                console.error("Vector PDF error:", err);
-                alert("Could not generate PDF. Please take a screenshot of the receipt.");
-            }
-        }
-
-        function copyUpiId() {
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(RESTAURANT_UPI_ID).then(() => {
-                    alert("UPI ID copied: " + RESTAURANT_UPI_ID);
-                }).catch(() => fallbackCopyUpi());
-            } else {
-                fallbackCopyUpi();
-            }
-        }
-
-        function fallbackCopyUpi() {
-            const textArea = document.createElement("textarea");
-            textArea.value = RESTAURANT_UPI_ID;
-            textArea.style.position = "fixed";
-            textArea.style.opacity = "0";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                alert("UPI ID copied: " + RESTAURANT_UPI_ID);
-            } catch (err) {
-                prompt("Copy UPI ID manually:", RESTAURANT_UPI_ID);
-            }
-            document.body.removeChild(textArea);
-        }
-
+        // Initialize Everything
+        checkStoredAuth();
         adjustPickupTimeDefaults();
         renderMenu();
         fetchStoreConfig();
